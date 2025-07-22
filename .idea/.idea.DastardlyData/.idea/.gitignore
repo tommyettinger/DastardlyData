@@ -2,7 +2,7 @@
 /shelf/
 /workspace.xml
 # Rider ignored files
-/.idea.DotnetLibraryTemplate.iml
+/.idea.DastardlyData.iml
 /contentModel.xml
 /modules.xml
 /projectSettingsUpdater.xml
