@@ -1,0 +1,178 @@
+
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+### Merge Settings For File Types
+
+# C#
+*.cs diff=csharp text
+
+# Unity Game Engine
+*.cginc text
+*.shader text
+
+## Merge Unity YAML Files With Unity Merge Tool
+*.mat merge=unityyamlmerge eol=lf
+*.anim merge=unityyamlmerge eol=lf
+*.unity merge=unityyamlmerge eol=lf
+*.prefab merge=unityyamlmerge eol=lf
+*.physicsMaterial2D merge=unityyamlmerge eol=lf
+*.physicsMaterial merge=unityyamlmerge eol=lf
+*.asset merge=unityyamlmerge eol=lf
+*.meta merge=unityyamlmerge eol=lf
+*.controller merge=unityyamlmerge eol=lf
+
+# Godot Game Engine
+*.tscn text
+*.tres text
+*.gd text
+*.gdshader text
+*.gdshaderinc text
+*.gdextension text
+
+### Merge Settings For File Types
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+##### Git-LFS Includes
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+### Project Specific
+
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+### Code Binaries
+## Dynamically Linked Libraries
+*.dll filter=lfs diff=lfs merge=lfs
+*.so filter=lfs diff=lfs merge=lfs
+*.o filter=lfs diff=lfs merge=lfs
+
+## Statically Linked Libraries
+*.lib filter=lfs diff=lfs merge=lfs
+*.a filter=lfs diff=lfs merge=lfs
+
+## Executable Files
+*.exe filter=lfs diff=lfs merge=lfs
+*.bin filter=lfs diff=lfs merge=lfs
+
+## Compressed Files
+*.zip filter=lfs diff=lfs merge=lfs
+*.rar filter=lfs diff=lfs merge=lfs
+*.7z filter=lfs diff=lfs merge=lfs
+*.tar filter=lfs diff=lfs merge=lfs
+*.gz filter=lfs diff=lfs merge=lfs
+*.o filter=lfs diff=lfs merge=lfs
+*.lzo filter=lfs diff=lfs merge=lfs
+*.lz4 filter=lfs diff=lfs merge=lfs
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+### 3D Model Interchange Formats
+
+## Exported Files
+*.abc filter=lfs diff=lfs merge=lfs -text
+*.collada filter=lfs diff=lfs merge=lfs -text
+*.dae filter=lfs diff=lfs merge=lfs -text
+*.dxf filter=lfs diff=lfs merge=lfs -text
+*.obj filter=lfs diff=lfs merge=lfs -text
+*.ply filter=lfs diff=lfs merge=lfs -text
+*.stl filter=lfs diff=lfs merge=lfs -text
+*.gltf filter=lfs diff=lfs merge=lfs -text
+*.glb filter=lfs diff=lfs merge=lfs
+
+
+## Source Files
+# Autodesk
+*.FBX filter=lfs diff=lfs merge=lfs -text
+*.fbx filter=lfs diff=lfs merge=lfs -text
+# Blender
+*.blend filter=lfs diff=lfs merge=lfs -text
+# Maya
+*.ma filter=lfs diff=lfs merge=lfs -text
+*.mtl filter=lfs diff=lfs merge=lfs -text
+*.mb filter=lfs diff=lfs merge=lfs
+# 3DS Max
+*.3ds filter=lfs diff=lfs merge=lfs -text
+*.max filter=lfs diff=lfs merge=lfs -text
+#Zbrush
+*.ztl filter=lfs diff=lfs merge=lfs -text
+*.ZPR filter=lfs diff=lfs merge=lfs -text
+
+### 3D Model Interchange Formats
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+### Audio
+*.mp3 filter=lfs diff=lfs merge=lfs
+*.ogg filter=lfs diff=lfs merge=lfs
+*.wav filter=lfs diff=lfs merge=lfs
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+### Video
+*.mp4 filter=lfs diff=lfs merge=lfs
+*.mov filter=lfs diff=lfs merge=lfs
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+### Fonts
+*.ttf filter=lfs diff=lfs merge=lfs
+*.otf filter=lfs diff=lfs merge=lfs
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+### Images
+
+## Exported Files
+*.png filter=lfs diff=lfs merge=lfs -text
+*.jpeg filter=lfs diff=lfs merge=lfs -text
+*.jpg filter=lfs diff=lfs merge=lfs -text
+*.hdr filter=lfs diff=lfs merge=lfs -text
+*.exr filter=lfs diff=lfs merge=lfs -text
+*.bmp filter=lfs diff=lfs merge=lfs -text
+*.gif filter=lfs diff=lfs merge=lfs -text
+*.tga filter=lfs diff=lfs merge=lfs -text
+
+## Source Files
+# Generic
+*.tif filter=lfs diff=lfs merge=lfs -text
+*.tiff filter=lfs diff=lfs merge=lfs -text
+# Photoshop
+*.psd filter=lfs diff=lfs merge=lfs -text
+# Illustrator
+*.ai filter=lfs diff=lfs merge=lfs -text
+# Substance
+*.spp filter=lfs diff=lfs merge=lfs -text
+*.painter_lock filter=lfs diff=lfs merge=lfs -text
+*.sbsar filter=lfs diff=lfs merge=lfs -text
+*.sbs filter=lfs diff=lfs merge=lfs -text
+# Affinity
+*.afphoto filter=lfs diff=lfs merge=lfs -text
+*.afdesign filter=lfs diff=lfs merge=lfs -text
+
+### Images
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+### Unity Files
+
+## Special rules for binary files (and large static text file)
+LightingData.asset filter=lfs diff=lfs merge=lfs -text
+TerrainData.asset filter=lfs diff=lfs merge=lfs -text
+NavMesh.asset filter=lfs diff=lfs merge=lfs -text
+*.anim filter=lfs diff=lfs merge=lfs -text
+*.unitypackage filter=lfs diff=lfs merge=lfs -text
+
+## Collapse Unity-generated files on GitHub
+*.asset linguist-generated
+*.mat linguist-generated
+*.meta linguist-generated
+*.prefab linguist-generated
+*.unity linguist-generated
+
+### Unity Files
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

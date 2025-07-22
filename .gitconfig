@@ -1,0 +1,9 @@
+### Unity Asset Merge Tool
+# uncomment and fix path to the install location of the version of unity's editor you want to use for handling merging unity yaml based files
+
+#[merge]
+#tool = unityyamlmerge
+
+#[mergetool "unityyamlmerge"]
+#trustExitCode = false
+#cmd = 'ABSOLUTE_PATH_TO_UNITY_EDITOR_INSTALL_DIRECTORY/Editor/Data/Tools/UnityYAMLMerge' merge -p "$BASE" "$REMOTE" "$LOCAL" "$MERGED"
