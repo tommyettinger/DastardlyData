@@ -24,7 +24,7 @@
   <!-- Nuget Publishing Configuration -->
   <PropertyGroup>
     <Title>DastardlyData</Title>
-    <Description>.NET generic data structures given some kind of super serum.</Description>
+    <Description>.NET generic data structures given some kind of super serum</Description>
     <PackageTags>data,structures,generic,ordered,dictionary,set,list,bag,deque</PackageTags>
     <Version>0.1.0</Version>
 

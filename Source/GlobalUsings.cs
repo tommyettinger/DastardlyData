@@ -1,5 +1,5 @@
 
-// #define MY_LIBRARY_NAME
+// #define DASTARDLY_DATA
 
 global using System;
 global using System.Collections.Generic;
