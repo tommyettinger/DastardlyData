@@ -2,8 +2,8 @@
 
   <!-- Attribution -->
   <PropertyGroup>
-    <Authors></Authors>
-    <Copyright></Copyright>
+    <Authors>Tommy Ettinger</Authors>
+    <Copyright>2025</Copyright>
   </PropertyGroup>
 
   <!-- Dotnet Configuration -->
@@ -11,21 +11,21 @@
     <LangVersion>12.0</LangVersion>
     <TargetFramework>net8.0</TargetFramework>
 
-    <RootNamespace></RootNamespace>
+    <RootNamespace>Dastardly.Data</RootNamespace>
     
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <!-- Dependancies -->
+  <!-- Dependencies -->
   <ItemGroup>
   </ItemGroup>
 
   <!-- Nuget Publishing Configuration -->
   <PropertyGroup>
-    <Title></Title>
-    <Description></Description>
-    <PackageTags></PackageTags>
+    <Title>DastardlyData</Title>
+    <Description>.NET generic data structures given some kind of super serum.</Description>
+    <PackageTags>data,structures,generic,ordered,dictionary,set,list,bag,deque</PackageTags>
     <Version>0.1.0</Version>
 
     <PackageReleaseNotes></PackageReleaseNotes>
@@ -33,7 +33,7 @@
     <NeutralLanguage>en</NeutralLanguage>
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl></PackageProjectUrl>
-    <RepositoryUrl></RepositoryUrl>
+    <RepositoryUrl>https://github.com/tommyettinger/DastardlyData</RepositoryUrl>
 
     <PackageLicenseFile>LICENSE.MD</PackageLicenseFile>
   </PropertyGroup>

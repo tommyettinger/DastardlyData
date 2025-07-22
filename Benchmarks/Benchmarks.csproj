@@ -15,7 +15,7 @@
 
   <!-- Project References -->
   <ItemGroup>
-    <ProjectReference Include="..\Source\DotnetTemplate.csproj" />
+    <ProjectReference Include="..\Source\DastardlyData.csproj" />
   </ItemGroup>
 
 </Project>
