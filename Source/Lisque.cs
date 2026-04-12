@@ -44,7 +44,12 @@ public class Lisque<T> : ILisque<T>
 
     public bool Contains(T item)
     {
-        throw new NotImplementedException();
+        if (Size == 0) return false;
+        if (Head <= Tail)
+        {
+            return Array.IndexOf(Items, item, Head, Size) >= 0;
+        }
+        return Array.IndexOf(Items, item, 0, Tail) >= 0 || Array.IndexOf(Items, item, Head, Items.Length - Head) >= 0;
     }
 
     public void CopyTo(T[] array, int arrayIndex)
