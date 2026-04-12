@@ -77,8 +77,32 @@ public class Lisque<T> : ILisque<T>
 
     public T this[int index]
     {
-        get => throw new NotImplementedException();
-        set => throw new NotImplementedException();
+        get
+        {
+            if (index <= 0)
+                return Items[Head];
+            if (index >= Size - 1)
+                return Items[Tail];
+            var i = Head + index;
+            if (i >= Items.Length)
+                i -= Items.Length;
+            return Items[i];
+        }
+
+        set
+        {
+            if (Size <= 0 || index >= Size)
+                PushLast(value);
+            else if (index < 0)
+                PushFirst(value);
+            else
+            {
+                var i = Head + Math.Min(Math.Max(index, 0), Size - 1);
+                if (i >= Items.Length)
+                    i -= Items.Length;
+                Items[i] = value;
+            }
+        }
     }
 
     public void PushFirst(T item)
