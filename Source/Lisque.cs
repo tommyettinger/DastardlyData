@@ -135,7 +135,22 @@ public class Lisque<T> : ILisque<T>
 
     public T PopFirst()
     {
-        throw new NotImplementedException();
+        if (Size == 0) {
+            // Underflow
+            throw new InvalidOperationException("Lisque is empty.");
+        }
+
+        var result = Items[Head];
+        Items[Head] = default!;
+        Head++;
+        if (Head == Items.Length) {
+            Head = 0;
+        }
+        if (--Size <= 1) Tail = Head;
+        Version++;
+
+        return result;
+
     }
 
     public T PopLast()
