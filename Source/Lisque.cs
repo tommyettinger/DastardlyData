@@ -155,7 +155,25 @@ public class Lisque<T> : ILisque<T>
 
     public T PopLast()
     {
-        throw new NotImplementedException();
+        if (Size == 0) {
+            throw new InvalidOperationException("Lisque is empty.");
+        }
+        
+        var tail = Tail;
+        var result = Items[tail];
+        Items[tail] = default!;
+
+        if (tail == 0) {
+            tail = Items.Length - 1;
+        } else {
+            --tail;
+        }
+        if (--Size <= 1) tail = Head;
+
+        Tail = tail;
+        Version++;
+
+        return result;
     }
 
     public T PopAt(int index)
