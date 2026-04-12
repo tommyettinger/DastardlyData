@@ -83,7 +83,16 @@ public class Lisque<T> : ILisque<T>
 
     public void PushFirst(T item)
     {
-        throw new NotImplementedException();
+        if (Size == Items.Length) {
+            Resize(Size << 1);
+        }
+        var head = this.Head - 1;
+        if (head == -1) head = Items.Length - 1;
+        Items[head] = item;
+
+        Head = head;
+        if (++Size == 1) Tail = head;
+        Version++;
     }
 
     public void PushLast(T item)
