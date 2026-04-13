@@ -65,7 +65,9 @@ public class Lisque<T> : ILisque<T>
         {
             return Array.IndexOf(Items, item, Head, Size) >= 0;
         }
-        return Array.IndexOf(Items, item, 0, Tail + 1) >= 0 || Array.IndexOf(Items, item, Head, Items.Length - Head) >= 0;
+
+        return Array.IndexOf(Items, item, 0, Tail + 1) >= 0 ||
+               Array.IndexOf(Items, item, Head, Items.Length - Head) >= 0;
     }
 
     public void CopyTo(T[] array, int arrayIndex)
@@ -86,12 +88,18 @@ public class Lisque<T> : ILisque<T>
         if (Size == 0) return -1;
         if (Head <= Tail)
         {
-            return Array.IndexOf(Items, item, Head, Size) - Head;
+            var index = Array.IndexOf(Items, item, Head, Size);
+            if (index == -1) return -1;
+            return index - Head;
         }
-
-        var index = Array.IndexOf(Items, item, Head, Items.Length - Head);
-        if (index != -1) return index - Head;
-        return Array.IndexOf(Items, item, 0, Tail + 1) + Items.Length - Head;
+        else
+        {
+            var index = Array.IndexOf(Items, item, Head, Items.Length - Head);
+            if (index != -1) return index - Head;
+            index = Array.IndexOf(Items, item, 0, Tail + 1);
+            if (index == -1) return -1;
+            return index + Items.Length - Head;
+        }
     }
 
     public void Insert(int index, T item)

@@ -34,5 +34,6 @@ public class Tests {
         Assert.That(lisque.IndexOf("alpha"), Is.EqualTo(0));
         Assert.That(lisque.IndexOf("beta"), Is.EqualTo(1));
         Assert.That(lisque.IndexOf("gamma"), Is.EqualTo(2));
+        Assert.That(lisque.IndexOf("not here"), Is.EqualTo(-1));
     }
 }
