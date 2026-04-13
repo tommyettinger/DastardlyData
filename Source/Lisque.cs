@@ -221,7 +221,39 @@ public class Lisque<T> : ILisque<T>
 
     public T PopAt(int index)
     {
-        throw new NotImplementedException();
+        if (index <= 0)
+            return PopFirst();
+        if (index >= Size)
+            return PopLast();
+
+        index += Head;
+        T value;
+        if (Head <= Tail) { // index is between head and tail.
+            value = Items[index];
+            Array.Copy(Items, index + 1, Items, index, Tail - index);
+            Items[Tail] = default!;
+            Tail--;
+            if (Tail == -1) Tail = Items.Length - 1;
+        } else if (index >= Items.Length) { // index is between 0 and tail.
+            index -= Items.Length;
+            value = Items[index];
+            Array.Copy(Items, index + 1, Items, index, Tail - index);
+            Items[Tail] = default!;
+            Tail--;
+            if (Tail == -1) Tail = Items.Length - 1;
+        } else { // index is between head and values.length.
+            value = Items[index];
+            Array.Copy(Items, Head, Items, Head + 1, index - Head);
+            Items[Head] = default!;
+            Head++;
+            if (Head == Items.Length) {
+                Head = 0;
+            }
+        }
+        Size--;
+        Version++;
+        return value;
+
     }
 
     public T First
