@@ -16,7 +16,7 @@ public class Lisque<T> : ILisque<T>
 
     public Lisque(int capacity = DefaultCapacity)
     {
-        Items = new T[capacity];
+        Items = new T[Math.Max(1, capacity)];
         Size = 0;
         Head = 0;
         Tail = 0;
@@ -83,7 +83,15 @@ public class Lisque<T> : ILisque<T>
 
     public int IndexOf(T item)
     {
-        throw new NotImplementedException();
+        if (Size == 0) return -1;
+        if (Head <= Tail)
+        {
+            return Array.IndexOf(Items, item, Head, Size) - Head;
+        }
+
+        var index = Array.IndexOf(Items, item, Head, Items.Length - Head);
+        if (index != -1) return index - Head;
+        return Array.IndexOf(Items, item, 0, Tail + 1) + Items.Length - Head;
     }
 
     public void Insert(int index, T item)
@@ -236,24 +244,22 @@ public class Lisque<T> : ILisque<T>
     {
         if (newSize < Size)
             newSize = Size;
-        var head = Head;
-        var tail = Tail;
 
         var newArray = new T[Math.Max(1, newSize)];
 
         if (Size > 0)
         {
-            if (head <= tail)
+            if (Head <= Tail)
             {
                 // Continuous
-                Array.Copy(Items, head, newArray, 0, tail - head + 1);
+                Array.Copy(Items, Head, newArray, 0, Tail - Head + 1);
             }
             else
             {
                 // Wrapped
-                var rest = Items.Length - head;
-                Array.Copy(Items, head, newArray, 0, rest);
-                Array.Copy(Items, 0, newArray, rest, tail + 1);
+                var rest = Items.Length - Head;
+                Array.Copy(Items, Head, newArray, 0, rest);
+                Array.Copy(Items, 0, newArray, rest, Tail + 1);
             }
 
             Head = 0;
