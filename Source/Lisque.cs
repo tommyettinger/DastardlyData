@@ -110,7 +110,43 @@ public class Lisque<T> : ILisque<T>
 
     public void Insert(int index, T item)
     {
-        throw new NotImplementedException();
+        if (index <= 0)
+            PushFirst(item);
+        else if (index >= Size)
+            PushLast(item);
+        else {
+            if (++Size > Items.Length) {
+                Resize(Items.Length << 1);
+            }
+
+            if (Head <= Tail) {
+                index += Head;
+                if (index >= Items.Length) index -= Items.Length;
+                var after = index + 1;
+                if (after >= Items.Length) after = 0;
+
+                Array.Copy(Items, index, Items, after, Head + Size - index - 1);
+                Items[index] = item;
+                Tail = Head + Size - 1;
+                if (Tail >= Items.Length) {
+                    Tail = 0;
+                }
+            } else {
+                if (Head + index < Items.Length) {
+                    // backward shift
+                    Array.Copy(Items, Head, Items, Head - 1, index);
+                    Items[Head - 1 + index] = item;
+                    Head--;
+                } else {
+                    // forward shift
+                    index = Head + index - Items.Length;
+                    Array.Copy(Items, index, Items, index + 1, Tail - index + 1);
+                    Items[index] = item;
+                    Tail++;
+                }
+            }
+            Version++;
+        }
     }
 
     public void RemoveAt(int index)
@@ -213,12 +249,12 @@ public class Lisque<T> : ILisque<T>
         if (Size == Items.Length) {
             Resize(Size << 1);
         }
-        var head = this.Head - 1;
-        if (head == -1) head = Items.Length - 1;
-        Items[head] = item;
 
-        Head = head;
-        if (++Size == 1) Tail = head;
+        Head--;
+        if (Head == -1) Head = Items.Length - 1;
+        Items[Head] = item;
+
+        if (++Size == 1) Tail = Head;
         Version++;
     }
 
