@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Runtime.CompilerServices;
 
 namespace Dastardly.Data;
 
@@ -39,7 +40,22 @@ public class Lisque<T> : ILisque<T>
 
     public void Clear()
     {
-        throw new NotImplementedException();
+        if (Size <= 0) return;
+        if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
+        {
+            if (Head <= Tail)
+                Array.Clear(Items, Head, Tail - Head + 1);
+            else
+            {
+                Array.Clear(Items, Head, Items.Length - Head);
+                Array.Clear(Items, 0, Tail + 1);
+            }
+        }
+
+        Size = 0;
+        Head = 0;
+        Tail = 0;
+        Version++;
     }
 
     public bool Contains(T item)
@@ -49,7 +65,7 @@ public class Lisque<T> : ILisque<T>
         {
             return Array.IndexOf(Items, item, Head, Size) >= 0;
         }
-        return Array.IndexOf(Items, item, 0, Tail) >= 0 || Array.IndexOf(Items, item, Head, Items.Length - Head) >= 0;
+        return Array.IndexOf(Items, item, 0, Tail + 1) >= 0 || Array.IndexOf(Items, item, Head, Items.Length - Head) >= 0;
     }
 
     public void CopyTo(T[] array, int arrayIndex)
@@ -245,5 +261,6 @@ public class Lisque<T> : ILisque<T>
         }
 
         Items = newArray;
+        Version++;
     }
 }
