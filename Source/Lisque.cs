@@ -115,7 +115,67 @@ public class Lisque<T> : ILisque<T>
 
     public void RemoveAt(int index)
     {
-        throw new NotImplementedException();
+        if (Size == 0) {
+            // Underflow
+            throw new InvalidOperationException("Lisque is empty.");
+        }
+
+        if (index <= 0)
+        {
+            Items[Head] = default!;
+            Head++;
+            if (Head == Items.Length) {
+                Head = 0;
+            }
+            if (--Size <= 1) Tail = Head;
+        }
+        else if (index >= Size)
+        {
+            Items[Tail] = default!;
+
+            if (Tail == 0) {
+                Tail = Items.Length - 1;
+            } else {
+                --Tail;
+            }
+            if (--Size <= 1) Tail = Head;
+        }
+        else
+        {
+            index += Head;
+            if (Head <= Tail)
+            {
+                // index is between head and tail.
+                Array.Copy(Items, index + 1, Items, index, Tail - index);
+                Items[Tail] = default!;
+                Tail--;
+                if (Tail == -1) Tail = Items.Length - 1;
+            }
+            else if (index >= Items.Length)
+            {
+                // index is between 0 and tail.
+                index -= Items.Length;
+                Array.Copy(Items, index + 1, Items, index, Tail - index);
+                Items[Tail] = default!;
+                Tail--;
+                if (Tail == -1) Tail = Items.Length - 1;
+            }
+            else
+            {
+                // index is between head and values.length.
+                Array.Copy(Items, Head, Items, Head + 1, index - Head);
+                Items[Head] = default!;
+                Head++;
+                if (Head == Items.Length)
+                {
+                    Head = 0;
+                }
+            }
+
+            Size--;
+        }
+
+        Version++;
     }
 
     public T this[int index]
@@ -202,18 +262,15 @@ public class Lisque<T> : ILisque<T>
             throw new InvalidOperationException("Lisque is empty.");
         }
         
-        var tail = Tail;
-        var result = Items[tail];
-        Items[tail] = default!;
+        var result = Items[Tail];
+        Items[Tail] = default!;
 
-        if (tail == 0) {
-            tail = Items.Length - 1;
+        if (Tail == 0) {
+            Tail = Items.Length - 1;
         } else {
-            --tail;
+            --Tail;
         }
-        if (--Size <= 1) tail = Head;
-
-        Tail = tail;
+        if (--Size <= 1) Tail = Head;
         Version++;
 
         return result;
@@ -253,7 +310,6 @@ public class Lisque<T> : ILisque<T>
         Size--;
         Version++;
         return value;
-
     }
 
     public T First
