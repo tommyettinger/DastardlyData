@@ -35,5 +35,11 @@ public class Tests {
         Assert.That(lisque.IndexOf("beta"), Is.EqualTo(1));
         Assert.That(lisque.IndexOf("gamma"), Is.EqualTo(2));
         Assert.That(lisque.IndexOf("not here"), Is.EqualTo(-1));
+
+        var received = lisque.PopAt(1);
+        Assert.That(received, Is.EqualTo("beta"));
+        Assert.That(lisque[1], Is.EqualTo("gamma"));
+        Assert.That(lisque.IndexOf("beta"), Is.EqualTo(-1));
+        Assert.That(lisque.IndexOf("gamma"), Is.EqualTo(1));
     }
 }
