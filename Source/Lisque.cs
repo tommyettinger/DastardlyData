@@ -72,7 +72,13 @@ public class Lisque<T> : ILisque<T>
 
     public void CopyTo(T[] array, int arrayIndex)
     {
-        throw new NotImplementedException();
+        if(Head <= Tail) 
+            Array.Copy(Items, Head, array, arrayIndex, Size);
+        else
+        {
+            Array.Copy(Items, Head, array, arrayIndex, Items.Length - Head);
+            Array.Copy(Items, 0, array, arrayIndex + Items.Length - Head, Tail + 1);
+        }
     }
 
     public bool Remove(T item)
