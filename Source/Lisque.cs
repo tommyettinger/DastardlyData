@@ -116,7 +116,7 @@ public class Lisque<T> : ILisque<T>
             }
             if (--Size <= 1) Tail = Head;
         }
-        else if (index >= Size)
+        else if (index >= Size - 1)
         {
             Items[Tail] = default!;
 
@@ -245,7 +245,7 @@ public class Lisque<T> : ILisque<T>
             }
             if (--Size <= 1) Tail = Head;
         }
-        else if (index >= Size)
+        else if (index >= Size - 1)
         {
             Items[Tail] = default!;
 
@@ -396,7 +396,7 @@ public class Lisque<T> : ILisque<T>
     {
         if (index <= 0)
             return PopFirst();
-        if (index >= Size)
+        if (index >= Size - 1)
             return PopLast();
 
         index += Head;
