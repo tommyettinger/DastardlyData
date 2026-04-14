@@ -83,7 +83,87 @@ public class Lisque<T> : ILisque<T>
 
     public bool Remove(T item)
     {
-        throw new NotImplementedException();
+        if (Size == 0) return false;
+        int index;
+        
+        if (Head <= Tail)
+        {
+            index = Array.IndexOf(Items, item, Head, Size);
+            if (index != -1) index -= Head;
+        }
+        else
+        {
+            index = Array.IndexOf(Items, item, Head, Items.Length - Head);
+            if (index != -1)
+            {
+                index -= Head;
+            }
+            else
+            {
+                index = Array.IndexOf(Items, item, 0, Tail + 1);
+                if (index != -1) index += Items.Length - Head;
+            }
+        }
+
+        if (index == -1) return false;
+        
+        if (index == 0)
+        {
+            Items[Head] = default!;
+            Head++;
+            if (Head == Items.Length) {
+                Head = 0;
+            }
+            if (--Size <= 1) Tail = Head;
+        }
+        else if (index >= Size)
+        {
+            Items[Tail] = default!;
+
+            if (Tail == 0) {
+                Tail = Items.Length - 1;
+            } else {
+                --Tail;
+            }
+            if (--Size <= 1) Tail = Head;
+        }
+        else
+        {
+            index += Head;
+            if (Head <= Tail)
+            {
+                // index is between head and tail.
+                Array.Copy(Items, index + 1, Items, index, Tail - index);
+                Items[Tail] = default!;
+                Tail--;
+                if (Tail == -1) Tail = Items.Length - 1;
+            }
+            else if (index >= Items.Length)
+            {
+                // index is between 0 and tail.
+                index -= Items.Length;
+                Array.Copy(Items, index + 1, Items, index, Tail - index);
+                Items[Tail] = default!;
+                Tail--;
+                if (Tail == -1) Tail = Items.Length - 1;
+            }
+            else
+            {
+                // index is between head and values.length.
+                Array.Copy(Items, Head, Items, Head + 1, index - Head);
+                Items[Head] = default!;
+                Head++;
+                if (Head == Items.Length)
+                {
+                    Head = 0;
+                }
+            }
+
+            Size--;
+        }
+
+        Version++;
+        return true;
     }
 
     public int Count => Size;
