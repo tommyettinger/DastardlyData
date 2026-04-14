@@ -42,4 +42,25 @@ public class Tests {
         Assert.That(lisque.IndexOf("beta"), Is.EqualTo(-1));
         Assert.That(lisque.IndexOf("gamma"), Is.EqualTo(1));
     }
+    [Test]
+    public void TestEnumerator()
+    {
+        Lisque<string> lisque = new(4);
+        lisque.PushLast("beta");
+        lisque.PushFirst("alpha");
+        lisque.PushLast("gamma");
+        lisque.PushLast("delta");
+        lisque.PushLast("epsilon");
+        lisque.PushLast("eta");
+        lisque.PushFirst("OOPS");
+        lisque.PopFirst();
+        lisque.Insert(5, "zeta");
+        lisque.Insert(5, "BEFORE ZETA");
+        lisque.RemoveAt(5);
+        Assert.That(lisque, Is.EquivalentTo(["alpha", "beta", "gamma",  "delta", "epsilon", "zeta", "eta"]));
+        foreach (var letter in lisque)
+        {
+            Console.WriteLine(letter);
+        }
+    }
 }
