@@ -78,6 +78,52 @@ public class Lisque<T> : ILisque<T>
         PushLast(item);
     }
 
+    public void AddAllFirst(IEnumerable<T> collection)
+    {
+        if (collection is ICollection<T> c)
+        {
+            var cs = c.Count;
+            if (cs == 0) return;
+            var oldSize = size;
+            EnsureCapacity(Math.Max(cs, oldSize));
+            if (ReferenceEquals(c, this)) {
+                if (head <= tail) {
+                    if (head >= oldSize)
+                        Array.Copy(items, head, items, head - oldSize, oldSize);
+                    else if (head > 0) {
+                        Array.Copy(items, tail + 1 - head, items, 0, head);
+                        Array.Copy(items, head, items, items.Length - (oldSize - head), oldSize - head);
+                    } else {
+                        Array.Copy(items, head, items, items.Length - oldSize, oldSize);
+                    }
+                } else {
+                    Array.Copy(items, head, items, head - oldSize, items.Length - head);
+                    Array.Copy(items, 0, items, items.Length - oldSize, tail + 1);
+                }
+                head -= oldSize;
+                if (head < 0) head += items.Length;
+                size += oldSize;
+                _version += oldSize;
+            } else {
+                var i = EnsureGap(0, cs);
+                foreach (var t in c) {
+                    items[i++] = t;
+                    if (i == items.Length) i = 0;
+                }
+                size += cs;
+                _version += cs;
+            }
+        }
+        else
+        {
+            var index = 0;
+            foreach (var t in collection)
+            {
+                Insert(index++, t);
+            }
+        }
+    }
+
     public void Clear()
     {
         if (size <= 0) return;
@@ -195,7 +241,7 @@ public class Lisque<T> : ILisque<T>
             }
             else
             {
-                // index is between head and values.length.
+                // index is between head and values.Length.
                 Array.Copy(items, head, items, head + 1, index - head);
                 items[head] = default!;
                 head++;
@@ -341,7 +387,7 @@ public class Lisque<T> : ILisque<T>
             }
             else
             {
-                // index is between head and values.length.
+                // index is between head and values.Length.
                 Array.Copy(items, head, items, head + 1, index - head);
                 items[head] = default!;
                 head++;
@@ -494,7 +540,7 @@ public class Lisque<T> : ILisque<T>
         }
         else
         {
-            // index is between head and values.length.
+            // index is between head and values.Length.
             value = items[index];
             Array.Copy(items, head, items, head + 1, index - head);
             items[head] = default!;
@@ -733,7 +779,7 @@ public class Lisque<T> : ILisque<T>
             else
             {
                 Array.Copy(items, headOld, newArray, 0, headPart);
-                int wrapped = index - headPart; // same as: head + index - values.length;
+                int wrapped = index - headPart; // same as: head + index - values.Length;
                 Array.Copy(items, 0, newArray, headPart, wrapped);
                 Array.Copy(items, wrapped, newArray, headPart + wrapped + gapSize, tailOld + 1 - wrapped);
             }
@@ -744,7 +790,6 @@ public class Lisque<T> : ILisque<T>
         items = newArray;
         return index;
     }
-
 
     private struct Enumerator : IEnumerator<T>
     {
