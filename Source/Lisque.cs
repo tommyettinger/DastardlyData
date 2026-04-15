@@ -23,6 +23,40 @@ public class Lisque<T> : ILisque<T>
         _version = 0;
     }
 
+    public Lisque(IEnumerable<T> collection)
+    {
+        ArgumentNullException.ThrowIfNull(collection);
+
+        if (collection is ICollection<T> c)
+        {
+            int count = c.Count;
+            if (count == 0)
+            {
+                _items = new T[DefaultCapacity];
+            }
+            else
+            {
+                _items = new T[count];
+                c.CopyTo(_items, 0);
+                _size = count;
+                _head = 0;
+                _tail = count - 1;
+            }
+        }
+        else
+        {
+            _items = new T[DefaultCapacity];
+            using (var en = collection.GetEnumerator())
+            {
+                while (en.MoveNext())
+                {
+                    Add(en.Current);
+                }
+            }
+        }
+
+    }
+
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();
