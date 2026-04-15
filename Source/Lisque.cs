@@ -7,19 +7,25 @@ public class Lisque<T> : ILisque<T>
 {
     private const int DefaultCapacity = 4;
 
-    private T[] _items;
-    private int _size;
-    private int _head;
-    private int _tail;
+    // The plan is to rename these all at once when my Java code has been fully ported.
+    
+    // ReSharper disable once InconsistentNaming
+    private T[] items;
+    // ReSharper disable once InconsistentNaming
+    private int size;
+    // ReSharper disable once InconsistentNaming
+    private int head;
+    // ReSharper disable once InconsistentNaming
+    private int tail;
 
     private int _version;
 
     public Lisque(int capacity = DefaultCapacity)
     {
-        _items = new T[Math.Max(1, capacity)];
-        _size = 0;
-        _head = 0;
-        _tail = 0;
+        items = new T[Math.Max(1, capacity)];
+        size = 0;
+        head = 0;
+        tail = 0;
         _version = 0;
     }
 
@@ -32,20 +38,20 @@ public class Lisque<T> : ILisque<T>
             int count = c.Count;
             if (count == 0)
             {
-                _items = new T[DefaultCapacity];
+                items = new T[DefaultCapacity];
             }
             else
             {
-                _items = new T[count];
-                c.CopyTo(_items, 0);
-                _size = count;
-                _head = 0;
-                _tail = count - 1;
+                items = new T[count];
+                c.CopyTo(items, 0);
+                size = count;
+                head = 0;
+                tail = count - 1;
             }
         }
         else
         {
-            _items = new T[DefaultCapacity];
+            items = new T[DefaultCapacity];
             using (var en = collection.GetEnumerator())
             {
                 while (en.MoveNext())
@@ -74,68 +80,68 @@ public class Lisque<T> : ILisque<T>
 
     public void Clear()
     {
-        if (_size <= 0) return;
+        if (size <= 0) return;
         if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
         {
-            if (_head <= _tail)
-                Array.Clear(_items, _head, _tail - _head + 1);
+            if (head <= tail)
+                Array.Clear(items, head, tail - head + 1);
             else
             {
-                Array.Clear(_items, _head, _items.Length - _head);
-                Array.Clear(_items, 0, _tail + 1);
+                Array.Clear(items, head, items.Length - head);
+                Array.Clear(items, 0, tail + 1);
             }
         }
 
-        _size = 0;
-        _head = 0;
-        _tail = 0;
+        size = 0;
+        head = 0;
+        tail = 0;
         _version++;
     }
 
     public bool Contains(T item)
     {
-        if (_size == 0) return false;
-        if (_head <= _tail)
+        if (size == 0) return false;
+        if (head <= tail)
         {
-            return Array.IndexOf(_items, item, _head, _size) >= 0;
+            return Array.IndexOf(items, item, head, size) >= 0;
         }
 
-        return Array.IndexOf(_items, item, 0, _tail + 1) >= 0 ||
-               Array.IndexOf(_items, item, _head, _items.Length - _head) >= 0;
+        return Array.IndexOf(items, item, 0, tail + 1) >= 0 ||
+               Array.IndexOf(items, item, head, items.Length - head) >= 0;
     }
 
     public void CopyTo(T[] array, int arrayIndex)
     {
-        if (_head <= _tail)
-            Array.Copy(_items, _head, array, arrayIndex, _size);
+        if (head <= tail)
+            Array.Copy(items, head, array, arrayIndex, size);
         else
         {
-            Array.Copy(_items, _head, array, arrayIndex, _items.Length - _head);
-            Array.Copy(_items, 0, array, arrayIndex + _items.Length - _head, _tail + 1);
+            Array.Copy(items, head, array, arrayIndex, items.Length - head);
+            Array.Copy(items, 0, array, arrayIndex + items.Length - head, tail + 1);
         }
     }
 
     public bool Remove(T item)
     {
-        if (_size == 0) return false;
+        if (size == 0) return false;
         int index;
 
-        if (_head <= _tail)
+        if (head <= tail)
         {
-            index = Array.IndexOf(_items, item, _head, _size);
-            if (index != -1) index -= _head;
+            index = Array.IndexOf(items, item, head, size);
+            if (index != -1) index -= head;
         }
         else
         {
-            index = Array.IndexOf(_items, item, _head, _items.Length - _head);
+            index = Array.IndexOf(items, item, head, items.Length - head);
             if (index != -1)
             {
-                index -= _head;
+                index -= head;
             }
             else
             {
-                index = Array.IndexOf(_items, item, 0, _tail + 1);
-                if (index != -1) index += _items.Length - _head;
+                index = Array.IndexOf(items, item, 0, tail + 1);
+                if (index != -1) index += items.Length - head;
             }
         }
 
@@ -143,88 +149,88 @@ public class Lisque<T> : ILisque<T>
 
         if (index == 0)
         {
-            _items[_head] = default!;
-            _head++;
-            if (_head == _items.Length)
+            items[head] = default!;
+            head++;
+            if (head == items.Length)
             {
-                _head = 0;
+                head = 0;
             }
 
-            if (--_size <= 1) _tail = _head;
+            if (--size <= 1) tail = head;
         }
-        else if (index >= _size - 1)
+        else if (index >= size - 1)
         {
-            _items[_tail] = default!;
+            items[tail] = default!;
 
-            if (_tail == 0)
+            if (tail == 0)
             {
-                _tail = _items.Length - 1;
+                tail = items.Length - 1;
             }
             else
             {
-                --_tail;
+                --tail;
             }
 
-            if (--_size <= 1) _tail = _head;
+            if (--size <= 1) tail = head;
         }
         else
         {
-            index += _head;
-            if (_head <= _tail)
+            index += head;
+            if (head <= tail)
             {
                 // index is between head and tail.
-                Array.Copy(_items, index + 1, _items, index, _tail - index);
-                _items[_tail] = default!;
-                _tail--;
-                if (_tail == -1) _tail = _items.Length - 1;
+                Array.Copy(items, index + 1, items, index, tail - index);
+                items[tail] = default!;
+                tail--;
+                if (tail == -1) tail = items.Length - 1;
             }
-            else if (index >= _items.Length)
+            else if (index >= items.Length)
             {
                 // index is between 0 and tail.
-                index -= _items.Length;
-                Array.Copy(_items, index + 1, _items, index, _tail - index);
-                _items[_tail] = default!;
-                _tail--;
-                if (_tail == -1) _tail = _items.Length - 1;
+                index -= items.Length;
+                Array.Copy(items, index + 1, items, index, tail - index);
+                items[tail] = default!;
+                tail--;
+                if (tail == -1) tail = items.Length - 1;
             }
             else
             {
                 // index is between head and values.length.
-                Array.Copy(_items, _head, _items, _head + 1, index - _head);
-                _items[_head] = default!;
-                _head++;
-                if (_head == _items.Length)
+                Array.Copy(items, head, items, head + 1, index - head);
+                items[head] = default!;
+                head++;
+                if (head == items.Length)
                 {
-                    _head = 0;
+                    head = 0;
                 }
             }
 
-            _size--;
+            size--;
         }
 
         _version++;
         return true;
     }
 
-    public int Count => _size;
+    public int Count => size;
     public bool IsReadOnly => false;
 
     public int IndexOf(T item)
     {
-        if (_size == 0) return -1;
-        if (_head <= _tail)
+        if (size == 0) return -1;
+        if (head <= tail)
         {
-            var index = Array.IndexOf(_items, item, _head, _size);
+            var index = Array.IndexOf(items, item, head, size);
             if (index == -1) return -1;
-            return index - _head;
+            return index - head;
         }
         else
         {
-            var index = Array.IndexOf(_items, item, _head, _items.Length - _head);
-            if (index != -1) return index - _head;
-            index = Array.IndexOf(_items, item, 0, _tail + 1);
+            var index = Array.IndexOf(items, item, head, items.Length - head);
+            if (index != -1) return index - head;
+            index = Array.IndexOf(items, item, 0, tail + 1);
             if (index == -1) return -1;
-            return index + _items.Length - _head;
+            return index + items.Length - head;
         }
     }
 
@@ -232,46 +238,46 @@ public class Lisque<T> : ILisque<T>
     {
         if (index <= 0)
             PushFirst(item);
-        else if (index >= _size)
+        else if (index >= size)
             PushLast(item);
         else
         {
-            if (++_size > _items.Length)
+            if (++size > items.Length)
             {
-                Resize(_items.Length << 1);
+                Resize(items.Length << 1);
             }
 
-            if (_head <= _tail)
+            if (head <= tail)
             {
-                index += _head;
-                if (index >= _items.Length) index -= _items.Length;
+                index += head;
+                if (index >= items.Length) index -= items.Length;
                 var after = index + 1;
-                if (after >= _items.Length) after = 0;
+                if (after >= items.Length) after = 0;
 
-                Array.Copy(_items, index, _items, after, _head + _size - index - 1);
-                _items[index] = item;
-                _tail = _head + _size - 1;
-                if (_tail >= _items.Length)
+                Array.Copy(items, index, items, after, head + size - index - 1);
+                items[index] = item;
+                tail = head + size - 1;
+                if (tail >= items.Length)
                 {
-                    _tail = 0;
+                    tail = 0;
                 }
             }
             else
             {
-                if (_head + index < _items.Length)
+                if (head + index < items.Length)
                 {
                     // backward shift
-                    Array.Copy(_items, _head, _items, _head - 1, index);
-                    _items[_head - 1 + index] = item;
-                    _head--;
+                    Array.Copy(items, head, items, head - 1, index);
+                    items[head - 1 + index] = item;
+                    head--;
                 }
                 else
                 {
                     // forward shift
-                    index = _head + index - _items.Length;
-                    Array.Copy(_items, index, _items, index + 1, _tail - index + 1);
-                    _items[index] = item;
-                    _tail++;
+                    index = head + index - items.Length;
+                    Array.Copy(items, index, items, index + 1, tail - index + 1);
+                    items[index] = item;
+                    tail++;
                 }
             }
 
@@ -281,7 +287,7 @@ public class Lisque<T> : ILisque<T>
 
     public void RemoveAt(int index)
     {
-        if (_size == 0)
+        if (size == 0)
         {
             // Underflow
             throw new InvalidOperationException("Lisque is empty.");
@@ -289,63 +295,63 @@ public class Lisque<T> : ILisque<T>
 
         if (index <= 0)
         {
-            _items[_head] = default!;
-            _head++;
-            if (_head == _items.Length)
+            items[head] = default!;
+            head++;
+            if (head == items.Length)
             {
-                _head = 0;
+                head = 0;
             }
 
-            if (--_size <= 1) _tail = _head;
+            if (--size <= 1) tail = head;
         }
-        else if (index >= _size - 1)
+        else if (index >= size - 1)
         {
-            _items[_tail] = default!;
+            items[tail] = default!;
 
-            if (_tail == 0)
+            if (tail == 0)
             {
-                _tail = _items.Length - 1;
+                tail = items.Length - 1;
             }
             else
             {
-                --_tail;
+                --tail;
             }
 
-            if (--_size <= 1) _tail = _head;
+            if (--size <= 1) tail = head;
         }
         else
         {
-            index += _head;
-            if (_head <= _tail)
+            index += head;
+            if (head <= tail)
             {
                 // index is between head and tail.
-                Array.Copy(_items, index + 1, _items, index, _tail - index);
-                _items[_tail] = default!;
-                _tail--;
-                if (_tail == -1) _tail = _items.Length - 1;
+                Array.Copy(items, index + 1, items, index, tail - index);
+                items[tail] = default!;
+                tail--;
+                if (tail == -1) tail = items.Length - 1;
             }
-            else if (index >= _items.Length)
+            else if (index >= items.Length)
             {
                 // index is between 0 and tail.
-                index -= _items.Length;
-                Array.Copy(_items, index + 1, _items, index, _tail - index);
-                _items[_tail] = default!;
-                _tail--;
-                if (_tail == -1) _tail = _items.Length - 1;
+                index -= items.Length;
+                Array.Copy(items, index + 1, items, index, tail - index);
+                items[tail] = default!;
+                tail--;
+                if (tail == -1) tail = items.Length - 1;
             }
             else
             {
                 // index is between head and values.length.
-                Array.Copy(_items, _head, _items, _head + 1, index - _head);
-                _items[_head] = default!;
-                _head++;
-                if (_head == _items.Length)
+                Array.Copy(items, head, items, head + 1, index - head);
+                items[head] = default!;
+                head++;
+                if (head == items.Length)
                 {
-                    _head = 0;
+                    head = 0;
                 }
             }
 
-            _size--;
+            size--;
         }
 
         _version++;
@@ -356,77 +362,77 @@ public class Lisque<T> : ILisque<T>
         get
         {
             if (index <= 0)
-                return _items[_head];
-            if (index >= _size - 1)
-                return _items[_tail];
-            var i = _head + index;
-            if (i >= _items.Length)
-                i -= _items.Length;
-            return _items[i];
+                return items[head];
+            if (index >= size - 1)
+                return items[tail];
+            var i = head + index;
+            if (i >= items.Length)
+                i -= items.Length;
+            return items[i];
         }
 
         set
         {
-            if (_size <= 0 || index >= _size)
+            if (size <= 0 || index >= size)
                 PushLast(value);
             else if (index < 0)
                 PushFirst(value);
             else
             {
-                var i = _head + Math.Min(Math.Max(index, 0), _size - 1);
-                if (i >= _items.Length)
-                    i -= _items.Length;
-                _items[i] = value;
+                var i = head + Math.Min(Math.Max(index, 0), size - 1);
+                if (i >= items.Length)
+                    i -= items.Length;
+                items[i] = value;
             }
         }
     }
 
     public void PushFirst(T item)
     {
-        if (_size == _items.Length)
+        if (size == items.Length)
         {
-            Resize(_size << 1);
+            Resize(size << 1);
         }
 
-        _head--;
-        if (_head == -1) _head = _items.Length - 1;
-        _items[_head] = item;
+        head--;
+        if (head == -1) head = items.Length - 1;
+        items[head] = item;
 
-        if (++_size == 1) _tail = _head;
+        if (++size == 1) tail = head;
         _version++;
     }
 
     public void PushLast(T item)
     {
-        if (_size == _items.Length)
+        if (size == items.Length)
         {
-            Resize(_items.Length << 1);
+            Resize(items.Length << 1);
         }
 
-        if (++_size == 1) _tail = _head;
-        else if (++_tail == _items.Length) _tail = 0;
-        _items[_tail] = item;
+        if (++size == 1) tail = head;
+        else if (++tail == items.Length) tail = 0;
+        items[tail] = item;
         _version++;
 
     }
 
     public T PopFirst()
     {
-        if (_size == 0)
+        if (size == 0)
         {
             // Underflow
             throw new InvalidOperationException("Lisque is empty.");
         }
 
-        var result = _items[_head];
-        _items[_head] = default!;
-        _head++;
-        if (_head == _items.Length)
+        var result = items[head];
+        items[head] = default!;
+        head++;
+        if (head == items.Length)
         {
-            _head = 0;
+            head = 0;
         }
 
-        if (--_size <= 1) _tail = _head;
+        if (--size <= 1) tail = head;
         _version++;
 
         return result;
@@ -435,24 +441,24 @@ public class Lisque<T> : ILisque<T>
 
     public T PopLast()
     {
-        if (_size == 0)
+        if (size == 0)
         {
             throw new InvalidOperationException("Lisque is empty.");
         }
 
-        var result = _items[_tail];
-        _items[_tail] = default!;
+        var result = items[tail];
+        items[tail] = default!;
 
-        if (_tail == 0)
+        if (tail == 0)
         {
-            _tail = _items.Length - 1;
+            tail = items.Length - 1;
         }
         else
         {
-            --_tail;
+            --tail;
         }
 
-        if (--_size <= 1) _tail = _head;
+        if (--size <= 1) tail = head;
         _version++;
 
         return result;
@@ -462,65 +468,65 @@ public class Lisque<T> : ILisque<T>
     {
         if (index <= 0)
             return PopFirst();
-        if (index >= _size - 1)
+        if (index >= size - 1)
             return PopLast();
 
-        index += _head;
+        index += head;
         T value;
-        if (_head <= _tail)
+        if (head <= tail)
         {
             // index is between head and tail.
-            value = _items[index];
-            Array.Copy(_items, index + 1, _items, index, _tail - index);
-            _items[_tail] = default!;
-            _tail--;
-            if (_tail == -1) _tail = _items.Length - 1;
+            value = items[index];
+            Array.Copy(items, index + 1, items, index, tail - index);
+            items[tail] = default!;
+            tail--;
+            if (tail == -1) tail = items.Length - 1;
         }
-        else if (index >= _items.Length)
+        else if (index >= items.Length)
         {
             // index is between 0 and tail.
-            index -= _items.Length;
-            value = _items[index];
-            Array.Copy(_items, index + 1, _items, index, _tail - index);
-            _items[_tail] = default!;
-            _tail--;
-            if (_tail == -1) _tail = _items.Length - 1;
+            index -= items.Length;
+            value = items[index];
+            Array.Copy(items, index + 1, items, index, tail - index);
+            items[tail] = default!;
+            tail--;
+            if (tail == -1) tail = items.Length - 1;
         }
         else
         {
             // index is between head and values.length.
-            value = _items[index];
-            Array.Copy(_items, _head, _items, _head + 1, index - _head);
-            _items[_head] = default!;
-            _head++;
-            if (_head == _items.Length)
+            value = items[index];
+            Array.Copy(items, head, items, head + 1, index - head);
+            items[head] = default!;
+            head++;
+            if (head == items.Length)
             {
-                _head = 0;
+                head = 0;
             }
         }
 
-        _size--;
+        size--;
         _version++;
         return value;
     }
 
     public T First
     {
-        get => _size == 0 ? throw new InvalidOperationException("Lisque is empty.") : _items[_head];
+        get => size == 0 ? throw new InvalidOperationException("Lisque is empty.") : items[head];
         set
         {
-            if (_size == 0) throw new InvalidOperationException("Lisque is empty.");
-            _items[_head] = value;
+            if (size == 0) throw new InvalidOperationException("Lisque is empty.");
+            items[head] = value;
         }
     }
 
     public T Last
     {
-        get => _size == 0 ? throw new InvalidOperationException("Lisque is empty.") : _items[_tail];
+        get => size == 0 ? throw new InvalidOperationException("Lisque is empty.") : items[tail];
         set
         {
-            if (_size == 0) throw new InvalidOperationException("Lisque is empty.");
-            _items[_tail] = value;
+            if (size == 0) throw new InvalidOperationException("Lisque is empty.");
+            items[tail] = value;
         }
     }
 
@@ -534,37 +540,213 @@ public class Lisque<T> : ILisque<T>
     /// This always allocates a new internal backing array.
     /// </remarks>
     /// <param name="newSize">The new capacity for the backing array.</param>
-    protected void Resize(int newSize)
+    private void Resize(int newSize)
     {
-        if (newSize < _size)
-            newSize = _size;
+        if (newSize < size)
+            newSize = size;
 
         var newArray = new T[Math.Max(1, newSize)];
 
-        if (_size > 0)
+        if (size > 0)
         {
-            if (_head <= _tail)
+            if (head <= tail)
             {
                 // Continuous
-                Array.Copy(_items, _head, newArray, 0, _tail - _head + 1);
+                Array.Copy(items, head, newArray, 0, tail - head + 1);
             }
             else
             {
                 // Wrapped
-                var rest = _items.Length - _head;
-                Array.Copy(_items, _head, newArray, 0, rest);
-                Array.Copy(_items, 0, newArray, rest, _tail + 1);
+                var rest = items.Length - head;
+                Array.Copy(items, head, newArray, 0, rest);
+                Array.Copy(items, 0, newArray, rest, tail + 1);
             }
 
-            _head = 0;
-            _tail = _size - 1;
+            head = 0;
+            tail = size - 1;
         }
 
-        _items = newArray;
+        items = newArray;
         _version++;
     }
+    
+    /*
+ * 
+ */
+    /// <summary>
+    /// Increases the size of the backing array to accommodate the specified number of additional items.
+    /// </summary>
+    /// <remarks>
+    /// Useful before adding many items to avoid multiple backing array resizes.
+    /// </remarks>
+    /// <param name="additional">How many additional items should become available in the capacity.</param>
+    public void EnsureCapacity(int additional) {
+        var needed = size + additional;
+        if (items.Length < needed) {
+            Resize(needed);
+        }
+    }
 
-    public struct Enumerator : IEnumerator<T>, IEnumerator
+    	/*
+	 * Make sure there is a "gap" of exactly {@code gapSize} values starting at {@code index}.
+    	 * This can resize the backing array to achieve this goal. If possible, this will keep the same backing array and modify
+	 * it in-place. The "gap" is not assigned null, and may contain old/duplicate references; calling code <em>must</em>
+	 * overwrite the entire gap with additional values to ensure GC correctness.
+	 *
+	 * @param index   the 0-based index in the iteration order where the gap will be present
+	 * @param gapSize the number of items that will need filling in the gap, and can be filled without issues.
+	 * @return the position in the array where the gap will begin, which is unrelated to the index
+	 * @implNote This is considered an incomplete modification for the purpose of {@link #modCount}, so it does not
+	 * change modCount; the code that fills in the gap should change modCount instead.
+	 */
+    /// <summary>
+    /// Make sure there is a "gap" of exactly gapSize values starting at index.
+    /// </summary>
+    /// <remarks>
+    /// This can resize the backing array to achieve this goal. If possible, this will keep the same backing array and
+    /// modify it in-place. The "gap" is not assigned null, and may contain old/duplicate references; calling code must
+    /// overwrite the entire gap with additional values to ensure GC correctness.
+    /// </remarks>
+    /// <param name="index">The 0-based index in the iteration order where the gap will be present.</param>
+    /// <param name="gapSize">The number of items that will need filling in the gap, and can be filled without issues.</param>
+    /// <returns>The position in the array where the gap will begin, which is unrelated to the index.</returns>
+	private int EnsureGap(int index, int gapSize) {
+		if (gapSize <= 0) return 0;
+		if (index < 0) index = 0;
+		if (index > size) {
+			var oldSize = size;
+			EnsureCapacity(gapSize);
+			return oldSize;
+		}
+		if (size == 0) {
+			head = 0;
+			tail = gapSize - 1;
+			if (items.Length < gapSize) {
+				items = new T[gapSize];
+			}
+			return 0;
+		}
+
+        if (size == 1)
+        {
+            if (items.Length < gapSize + size) {
+                var item = items[head];
+                items = new T[gapSize + size];
+                if (index == 0) {
+                    items[gapSize] = item;
+                    head = 0;
+                    tail = gapSize;
+                    return 0;
+                }
+
+                items[0] = item;
+                head = 0;
+                tail = gapSize;
+                return 1;
+            }
+
+            if (index == 0) {
+                if (head != gapSize) {
+                    items[gapSize] = items[head];
+                    items[head] = default!;
+                }
+                head = 0;
+                tail = gapSize;
+                return 0;
+            }
+
+            if (head != 0) {
+                items[0] = items[head];
+                items[head] = default!;
+            }
+            head = 0;
+            tail = gapSize;
+            return 1;
+        }
+
+        var headOld = head;
+        var tailOld = tail;
+        var newSize = Math.Max(size + gapSize, items.Length);
+        if (newSize == items.Length)
+        {
+            // keep the same array because there is enough room to form the gap.
+            if (headOld <= tailOld)
+            {
+                if (headOld != 0)
+                {
+                    if (index > 0)
+                        Array.Copy(items, headOld, items, 0, index);
+                    head = 0;
+                }
+
+                Array.Copy(items, headOld + index, items, index + gapSize, size - head - index);
+                tail += gapSize - (headOld - head);
+                return index;
+            }
+
+            if (headOld + index <= items.Length)
+            {
+                if (headOld - gapSize >= 0)
+                {
+                    Array.Copy(items, headOld, items, headOld - gapSize, index);
+                    head -= gapSize;
+                }
+                else
+                {
+                    Array.Copy(items, headOld + index, items, headOld + index + gapSize,
+                        items.Length - (headOld + index + gapSize));
+                    tail += gapSize;
+                }
+
+                return head + index;
+            }
+
+            var wrapped = headOld + index - items.Length;
+            Array.Copy(items, wrapped, items, wrapped + gapSize, tailOld + 1 - wrapped);
+            tail += gapSize;
+            return wrapped;
+        }
+
+        var newArray = new T[newSize];
+
+        if (headOld <= tailOld)
+        {
+            // Continuous
+            if (index > 0)
+                Array.Copy(items, headOld, newArray, 0, index);
+            head = 0;
+            Array.Copy(items, headOld + index, newArray, index + gapSize, size - headOld - index);
+            tail += gapSize;
+        }
+        else
+        {
+            // Wrapped
+            var headPart = items.Length - headOld;
+            if (index < headPart)
+            {
+                if (index > 0)
+                    Array.Copy(items, headOld, newArray, 0, index);
+                head = 0;
+                Array.Copy(items, headOld + index, newArray, index + gapSize, headPart - index);
+                Array.Copy(items, 0, newArray, index + gapSize + headPart - index, tailOld + 1);
+            }
+            else
+            {
+                Array.Copy(items, headOld, newArray, 0, headPart);
+                int wrapped = index - headPart; // same as: head + index - values.length;
+                Array.Copy(items, 0, newArray, headPart, wrapped);
+                Array.Copy(items, wrapped, newArray, headPart + wrapped + gapSize, tailOld + 1 - wrapped);
+            }
+
+            tail = size + gapSize - 1;
+        }
+
+        items = newArray;
+        return index;
+    }
+
+
+    private struct Enumerator : IEnumerator<T>
     {
         private readonly Lisque<T> _lisque;
         private readonly int _version;
@@ -591,7 +773,7 @@ public class Lisque<T> : ILisque<T>
                 throw new InvalidOperationException("Collection was modified after enumerator was created.");
             }
 
-            if ((uint)_index < (uint)localLisque._size)
+            if ((uint)_index < (uint)localLisque.size)
             {
                 _current = localLisque[_index];
                 _index++;
