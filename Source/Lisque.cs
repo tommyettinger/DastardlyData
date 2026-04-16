@@ -725,6 +725,32 @@ public class Lisque<T> : ILisque<T>
             tail = size - 1;
         }
     }
+    
+    /// <summary>
+    /// Sets the capacity to the actual number of elements in the lisque.
+    /// </summary>
+    /// <remarks>
+    /// Unlike <see cref="List{T}.TrimExcess()"/>, this doesn't have a threshold value.
+    /// It always sets the capacity to the actual size.
+    /// </remarks>
+    public void TrimExcess()
+    {
+        if (size >= items.Length) return;
+        _version++;
+        if (head <= tail) {
+            var next = new T[size];
+            Array.Copy(items, head, next, 0, size);
+            items = next;
+        } else {
+            var next = new T[size];
+            Array.Copy(items, head, next, 0, items.Length - head);
+            Array.Copy(items, 0, next, items.Length - head, tail + 1);
+            items = next;
+        }
+        head = 0;
+        tail = items.Length - 1;
+    }
+
 
     public T First
     {
