@@ -85,7 +85,7 @@ public class Lisque<T> : ILisque<T>
     /// will be in the IEnumerable.
     /// </remarks>
     /// <param name="collection">An IEnumerable of T or, preferably, an ICollection of T.</param>
-    public void AddAllFirst(IEnumerable<T> collection)
+    public void AddRangeFirst(IEnumerable<T> collection)
     {
         ArgumentNullException.ThrowIfNull(collection);
 
@@ -137,25 +137,25 @@ public class Lisque<T> : ILisque<T>
     /// Adds every T in the given IEnumerable to this Lisque at the end, keeping the same order.
     /// </summary>
     /// <remarks>
-    /// Unlike <see cref="AddAllFirst"/>, this performs in <c>O(m)</c> time, unless the capacity
+    /// Unlike <see cref="AddRangeFirst"/>, this performs in <c>O(m)</c> time, unless the capacity
     /// must be increased. Then, it performs in <c>O(n + m)</c> time. This simply calls
-    /// <see cref="AddAllLast"/> with the same parameter.
+    /// <see cref="AddRange"/> with the same parameter.
     /// </remarks>
     /// <param name="collection">An IEnumerable of T or, preferably, an ICollection of T.</param>
-    public void AddAllLast(IEnumerable<T> collection)
+    public void AddRangeLast(IEnumerable<T> collection)
     {
-        AddAll(collection);
+        AddRange(collection);
     }
     
     /// <summary>
     /// Adds every T in the given IEnumerable to this Lisque at the end, keeping the same order.
     /// </summary>
     /// <remarks>
-    /// Unlike <see cref="AddAllFirst"/>, this performs in <c>O(m)</c> time, unless the capacity
+    /// Unlike <see cref="AddRangeFirst"/>, this performs in <c>O(m)</c> time, unless the capacity
     /// must be increased. Then, it performs in <c>O(n + m)</c> time.
     /// </remarks>
     /// <param name="collection">An IEnumerable of T or, preferably, an ICollection of T.</param>
-    public void AddAll(IEnumerable<T> collection)
+    public void AddRange(IEnumerable<T> collection)
     {
         ArgumentNullException.ThrowIfNull(collection);
 
@@ -338,17 +338,47 @@ public class Lisque<T> : ILisque<T>
         if (size == 0) return -1;
         if (head <= tail)
         {
-            var index = Array.IndexOf(items, item, head, size);
-            if (index == -1) return -1;
-            return index - head;
+            var idx = Array.IndexOf(items, item, head, size);
+            if (idx == -1) return -1;
+            return idx - head;
         }
         else
         {
-            var index = Array.IndexOf(items, item, head, items.Length - head);
-            if (index != -1) return index - head;
-            index = Array.IndexOf(items, item, 0, tail + 1);
-            if (index == -1) return -1;
-            return index + items.Length - head;
+            var idx = Array.IndexOf(items, item, head, items.Length - head);
+            if (idx != -1) return idx - head;
+            idx = Array.IndexOf(items, item, 0, tail + 1);
+            if (idx == -1) return -1;
+            return idx + items.Length - head;
+        }
+    }
+
+    public int IndexOf(T item, int index)
+    {
+        return IndexOf(item, index, size - index);
+    }
+    
+    public int IndexOf(T item, int index, int count)
+    {
+        if (index > size)
+            throw new ArgumentOutOfRangeException(nameof(index), "index argument cannot be greater than the size of the collection.");
+        if (count < 0 || index > size - count)
+            throw new ArgumentOutOfRangeException(nameof(count), "count argument is invalid.");
+        if (size == 0) return -1;
+        if (head <= tail)
+        {
+            var idx = Array.IndexOf(items, item, head + index, count);
+            if (idx == -1) return -1;
+            return idx - head;
+        }
+        else
+        {
+            var cnt = Math.Min(count, items.Length - head);
+            var idx = Array.IndexOf(items, item, head, cnt);
+            if (idx != -1) return idx - head;
+            if (count <= cnt) return -1;
+            idx = Array.IndexOf(items, item, 0, Math.Min(tail + 1, count - cnt));
+            if (idx == -1) return -1;
+            return idx + items.Length - head;
         }
     }
 
@@ -839,7 +869,7 @@ public class Lisque<T> : ILisque<T>
             else
             {
                 Array.Copy(items, headOld, newArray, 0, headPart);
-                int wrapped = index - headPart; // same as: head + index - values.Length;
+                var wrapped = index - headPart; // same as: head + index - values.Length;
                 Array.Copy(items, 0, newArray, headPart, wrapped);
                 Array.Copy(items, wrapped, newArray, headPart + wrapped + gapSize, tailOld + 1 - wrapped);
             }
