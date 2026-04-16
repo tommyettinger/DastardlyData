@@ -693,6 +693,39 @@ public class Lisque<T> : ILisque<T>
         return value;
     }
 
+    /// <summary>
+    /// Swaps the contents of two 0-based indices in the lisque.
+    /// </summary>
+    /// <param name="indexA">The first index to swap.</param>
+    /// <param name="indexB">The second index to swap.</param>
+    public void Swap(int indexA, int indexB)
+    {
+        (items[indexA], items[indexB]) = (items[indexB], items[indexA]);
+    }
+
+    /// <summary>
+    /// Sorts the entire lisque using the default comparison for T.
+    /// </summary>
+    public void Sort()
+    {
+        if(size <= 1) return;
+        if (head <= tail)
+        {
+            Array.Sort(items, head, size);
+        }
+        else
+        {
+            Array.Copy(items, head, items, tail + 1, items.Length - head);
+            if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
+            {
+                Array.Clear(items, size, items.Length - size);
+            }
+            Array.Sort(items, 0, size);
+            head = 0;
+            tail = size - 1;
+        }
+    }
+
     public T First
     {
         get => size == 0 ? throw new InvalidOperationException("Lisque is empty.") : items[head];
