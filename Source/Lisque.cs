@@ -85,7 +85,7 @@ public class Lisque<T> : ILisque<T>
             var cs = c.Count;
             if (cs == 0) return;
             var oldSize = size;
-            EnsureCapacity(Math.Max(cs, oldSize));
+            EnsureCapacity(cs);
             if (ReferenceEquals(c, this)) {
                 if (head <= tail) {
                     if (head >= oldSize)
@@ -121,6 +121,50 @@ public class Lisque<T> : ILisque<T>
             {
                 Insert(index++, t);
             }
+        }
+    }
+
+    public void AddAllLast(IEnumerable<T> collection)
+    {
+        AddAll(collection);
+    }
+    
+    public void AddAll(IEnumerable<T> collection)
+    {
+        if (collection is ICollection<T> c)
+        {
+            var cs = c.Count;
+            if (cs == 0) return;
+            var oldSize = size;
+            EnsureCapacity(cs);
+            if (ReferenceEquals(collection, this))
+            {
+                if (head <= tail) {
+                    if (tail + 1 < items.Length)
+                        Array.Copy(items, head, items, tail + 1, Math.Min(size, items.Length - tail - 1));
+                    if (items.Length - tail - 1 < size)
+                        Array.Copy(items, head + items.Length - tail - 1, items, 0, size - (items.Length - tail - 1));
+                } else {
+                    Array.Copy(items, head, items, tail + 1, items.Length - head);
+                    Array.Copy(items, 0, items, tail + 1 + items.Length - head, tail + 1);
+                }
+                tail += oldSize;
+                size += oldSize;
+                _version += oldSize;
+            } else {
+                foreach (var t in c)
+                {
+                    Add(t);
+                }
+            }
+        }
+        else
+        {
+            foreach (var t in collection)
+            {
+                Add(t);
+            }
+
         }
     }
 
