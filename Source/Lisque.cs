@@ -359,8 +359,8 @@ public class Lisque<T> : ILisque<T>
     
     public int IndexOf(T item, int index, int count)
     {
-        if (index > size)
-            throw new ArgumentOutOfRangeException(nameof(index), "index argument cannot be greater than the size of the collection.");
+        if (index > size || index < 0)
+            throw new ArgumentOutOfRangeException(nameof(index), "index argument cannot be greater than the size of the collection, or negative.");
         if (count < 0 || index > size - count)
             throw new ArgumentOutOfRangeException(nameof(count), "count argument is invalid.");
         if (size == 0) return -1;
@@ -372,8 +372,8 @@ public class Lisque<T> : ILisque<T>
         }
         else
         {
-            var cnt = Math.Min(count, items.Length - head);
-            var idx = Array.IndexOf(items, item, head, cnt);
+            var cnt = Math.Min(count, items.Length - head - index);
+            var idx = Array.IndexOf(items, item, head + index, cnt);
             if (idx != -1) return idx - head;
             if (count <= cnt) return -1;
             idx = Array.IndexOf(items, item, 0, Math.Min(tail + 1, count - cnt));
