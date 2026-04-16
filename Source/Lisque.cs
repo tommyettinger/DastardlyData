@@ -382,6 +382,41 @@ public class Lisque<T> : ILisque<T>
         }
     }
 
+    public int LastIndexOf(T item)
+    {
+        return LastIndexOf(item, size - 1, size);
+    }
+
+    public int LastIndexOf(T item, int index)
+    {
+        return LastIndexOf(item, index, index + 1);
+    }
+
+    public int LastIndexOf(T item, int index, int count)
+    {
+        if (index > size || index < 0)
+            throw new ArgumentOutOfRangeException(nameof(index), "index argument cannot be greater than the size of the collection, or negative.");
+        if (count < 0 || index > size - count)
+            throw new ArgumentOutOfRangeException(nameof(count), "count argument is invalid.");
+        if (size == 0) return -1;
+        if (head <= tail)
+        {
+            var idx = Array.LastIndexOf(items, item, head + index, count);
+            if (idx == -1) return -1;
+            return idx - head;
+        }
+        else
+        {
+            var cnt = Math.Min(count, items.Length - head + index);
+            var idx = Array.LastIndexOf(items, item, head + index, cnt);
+            if (idx != -1) return idx - head;
+            if (count <= cnt) return -1;
+            idx = Array.LastIndexOf(items, item, 0, Math.Min(tail + 1, count - cnt));
+            if (idx == -1) return -1;
+            return idx + items.Length - head;
+        }
+    }
+
     public void Insert(int index, T item)
     {
         if (index <= 0)
