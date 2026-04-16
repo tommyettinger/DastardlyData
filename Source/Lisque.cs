@@ -52,15 +52,11 @@ public class Lisque<T> : ILisque<T>
         else
         {
             items = new T[DefaultCapacity];
-            using (var en = collection.GetEnumerator())
+            foreach (var t in collection)
             {
-                while (en.MoveNext())
-                {
-                    Add(en.Current);
-                }
+                Add(t);
             }
         }
-
     }
 
     IEnumerator IEnumerable.GetEnumerator()
@@ -78,8 +74,21 @@ public class Lisque<T> : ILisque<T>
         PushLast(item);
     }
 
+    /// <summary>
+    /// Adds every T in the given IEnumerable to this Lisque at the beginning, keeping the same order.
+    /// </summary>
+    /// <remarks>
+    /// This is significantly more efficient when the given parameter implements ICollection.
+    /// For an ICollection parameter, this operates in <c>O(n + m)</c> time, where n is the size of
+    /// this Lisque and m is the Count of collection. If the parameter only implements IEnumerable,
+    /// performance degrades to <c>O(nm)</c> time because this doesn't know how many T items there
+    /// will be in the IEnumerable.
+    /// </remarks>
+    /// <param name="collection">An IEnumerable of T or, preferably, an ICollection of T.</param>
     public void AddAllFirst(IEnumerable<T> collection)
     {
+        ArgumentNullException.ThrowIfNull(collection);
+
         if (collection is ICollection<T> c)
         {
             var cs = c.Count;
@@ -124,13 +133,32 @@ public class Lisque<T> : ILisque<T>
         }
     }
 
+    /// <summary>
+    /// Adds every T in the given IEnumerable to this Lisque at the end, keeping the same order.
+    /// </summary>
+    /// <remarks>
+    /// Unlike <see cref="AddAllFirst"/>, this performs in <c>O(m)</c> time, unless the capacity
+    /// must be increased. Then, it performs in <c>O(n + m)</c> time. This simply calls
+    /// <see cref="AddAllLast"/> with the same parameter.
+    /// </remarks>
+    /// <param name="collection">An IEnumerable of T or, preferably, an ICollection of T.</param>
     public void AddAllLast(IEnumerable<T> collection)
     {
         AddAll(collection);
     }
     
+    /// <summary>
+    /// Adds every T in the given IEnumerable to this Lisque at the end, keeping the same order.
+    /// </summary>
+    /// <remarks>
+    /// Unlike <see cref="AddAllFirst"/>, this performs in <c>O(m)</c> time, unless the capacity
+    /// must be increased. Then, it performs in <c>O(n + m)</c> time.
+    /// </remarks>
+    /// <param name="collection">An IEnumerable of T or, preferably, an ICollection of T.</param>
     public void AddAll(IEnumerable<T> collection)
     {
+        ArgumentNullException.ThrowIfNull(collection);
+
         if (collection is ICollection<T> c)
         {
             var cs = c.Count;
@@ -676,19 +704,7 @@ public class Lisque<T> : ILisque<T>
             Resize(needed);
         }
     }
-
-    	/*
-	 * Make sure there is a "gap" of exactly {@code gapSize} values starting at {@code index}.
-    	 * This can resize the backing array to achieve this goal. If possible, this will keep the same backing array and modify
-	 * it in-place. The "gap" is not assigned null, and may contain old/duplicate references; calling code <em>must</em>
-	 * overwrite the entire gap with additional values to ensure GC correctness.
-	 *
-	 * @param index   the 0-based index in the iteration order where the gap will be present
-	 * @param gapSize the number of items that will need filling in the gap, and can be filled without issues.
-	 * @return the position in the array where the gap will begin, which is unrelated to the index
-	 * @implNote This is considered an incomplete modification for the purpose of {@link #modCount}, so it does not
-	 * change modCount; the code that fills in the gap should change modCount instead.
-	 */
+    
     /// <summary>
     /// Make sure there is a "gap" of exactly gapSize values starting at index.
     /// </summary>
