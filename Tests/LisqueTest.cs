@@ -63,4 +63,21 @@ public class Tests {
             Console.WriteLine(letter);
         }
     }
+
+    [Test]
+    public void TestIndexOf()
+    {
+        Lisque<string> lisque = new(["alpha", "beta", "gamma",  "delta", "epsilon", "zeta", "eta",
+                                     "alpha", "beta", "gamma",  "delta", "epsilon", "zeta", "eta",
+                                     "alpha", "beta", "gamma",  "delta", "epsilon", "zeta", "eta"]);
+        Assert.That(lisque.IndexOf("alpha"), Is.EqualTo(0));
+        Assert.That(lisque.IndexOf("beta"), Is.EqualTo(1));
+        Assert.That(lisque.IndexOf("beta", 2), Is.EqualTo(8));
+        Assert.That(lisque.IndexOf("beta", 2, 4), Is.EqualTo(-1));
+        Assert.That(lisque.LastIndexOf("alpha"), Is.EqualTo(14));
+        Assert.That(lisque.LastIndexOf("beta"), Is.EqualTo(15));
+        Assert.That(lisque.LastIndexOf("beta", 7), Is.EqualTo(1));
+        Assert.That(lisque.LastIndexOf("beta", 20, 4), Is.EqualTo(-1));
+        
+    }
 }

@@ -396,7 +396,7 @@ public class Lisque<T> : ILisque<T>
     {
         if (index > size || index < 0)
             throw new ArgumentOutOfRangeException(nameof(index), "index argument cannot be greater than the size of the collection, or negative.");
-        if (count < 0 || index > size - count)
+        if (count < 0 || count > index + 1)
             throw new ArgumentOutOfRangeException(nameof(count), "count argument is invalid.");
         if (size == 0) return -1;
         if (head <= tail)
