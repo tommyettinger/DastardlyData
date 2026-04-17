@@ -725,32 +725,56 @@ public class Lisque<T> : ILisque<T>
             tail = size - 1;
         }
     }
-    
+
     /// <summary>
-    /// Sets the capacity to the actual number of elements in the lisque.
+    /// Sorts the entire lisque using the given IComparer of T.
     /// </summary>
-    /// <remarks>
-    /// Unlike <see cref="List{T}.TrimExcess()"/>, this doesn't have a threshold value.
-    /// It always sets the capacity to the actual size.
-    /// </remarks>
-    public void TrimExcess()
+    public void Sort(IComparer<T> comparer)
     {
-        if (size >= items.Length) return;
-        _version++;
-        if (head <= tail) {
-            var next = new T[size];
-            Array.Copy(items, head, next, 0, size);
-            items = next;
-        } else {
-            var next = new T[size];
-            Array.Copy(items, head, next, 0, items.Length - head);
-            Array.Copy(items, 0, next, items.Length - head, tail + 1);
-            items = next;
+        if(size <= 1) return;
+        if (head <= tail)
+        {
+            Array.Sort(items, head, size, comparer);
         }
-        head = 0;
-        tail = items.Length - 1;
+        else
+        {
+            Array.Copy(items, head, items, tail + 1, items.Length - head);
+            if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
+            {
+                Array.Clear(items, size, items.Length - size);
+            }
+            Array.Sort(items, 0, size, comparer);
+            head = 0;
+            tail = size - 1;
+        }
     }
 
+    /// <summary>
+    /// Sorts the entire lisque using the given Comparison of T.
+    /// </summary>
+    /// <remarks>
+    /// This is the same as the <see cref="Sort(IComparer{T})"/> method except that it creates an IComparer
+    /// from the given Comparison if it needs to sort at all.
+    /// </remarks>
+    public void Sort(Comparison<T> comparer)
+    {
+        if(size <= 1) return;
+        if (head <= tail)
+        {
+            Array.Sort(items, head, size, Comparer<T>.Create(comparer));
+        }
+        else
+        {
+            Array.Copy(items, head, items, tail + 1, items.Length - head);
+            if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
+            {
+                Array.Clear(items, size, items.Length - size);
+            }
+            Array.Sort(items, 0, size, Comparer<T>.Create(comparer));
+            head = 0;
+            tail = size - 1;
+        }
+    }
 
     public T First
     {
@@ -973,6 +997,31 @@ public class Lisque<T> : ILisque<T>
 
         items = newArray;
         return index;
+    }
+    
+    /// <summary>
+    /// Sets the capacity to the actual number of elements in the lisque.
+    /// </summary>
+    /// <remarks>
+    /// Unlike <see cref="List{T}.TrimExcess()"/>, this doesn't have a threshold value.
+    /// It always sets the capacity to the actual size.
+    /// </remarks>
+    public void TrimExcess()
+    {
+        if (size >= items.Length) return;
+        _version++;
+        if (head <= tail) {
+            var next = new T[size];
+            Array.Copy(items, head, next, 0, size);
+            items = next;
+        } else {
+            var next = new T[size];
+            Array.Copy(items, head, next, 0, items.Length - head);
+            Array.Copy(items, 0, next, items.Length - head, tail + 1);
+            items = next;
+        }
+        head = 0;
+        tail = items.Length - 1;
     }
 
     private struct Enumerator : IEnumerator<T>
