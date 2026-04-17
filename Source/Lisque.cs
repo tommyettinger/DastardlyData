@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace Dastardly.Data;
 
-public class Lisque<T> : ILisque<T>
+public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
 {
     private const int DefaultCapacity = 4;
 
@@ -729,7 +729,7 @@ public class Lisque<T> : ILisque<T>
     /// <summary>
     /// Sorts the entire lisque using the given IComparer of T.
     /// </summary>
-    public void Sort(IComparer<T> comparer)
+    public void Sort(IComparer<T>? comparer)
     {
         if(size <= 1) return;
         if (head <= tail)
@@ -808,6 +808,61 @@ public class Lisque<T> : ILisque<T>
             if (size == 0) throw new InvalidOperationException("Lisque is empty.");
             items[tail] = value;
         }
+    }
+
+    public bool Equals(Lisque<T>? other)
+    {
+        if (other is null) return false;
+        if (ReferenceEquals(this, other)) return true;
+        if(size != other.size) return false;
+
+        using var mine = GetEnumerator();
+        using var them = other.GetEnumerator();
+        while (mine.MoveNext() && them.MoveNext())
+        {
+            if(!Equals(mine.Current, them.Current)) return false;
+        }
+
+        return true;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is null) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((Lisque<T>)obj);
+    }
+
+    // ReSharper disable method NonReadonlyMemberInGetHashCode
+    public override int GetHashCode()
+    {
+        var index = head;
+
+        var hash = size + 1;
+        for (int s = 0; s < size; s++) {
+            var value = items[index];
+
+            hash *= 29;
+            if (value != null)
+                hash += value.GetHashCode();
+
+            index++;
+            if (index == items.Length)
+                index = 0;
+        }
+
+        return hash;
+    }
+
+    public static bool operator ==(Lisque<T>? left, Lisque<T>? right)
+    {
+        return Equals(left, right);
+    }
+
+    public static bool operator !=(Lisque<T>? left, Lisque<T>? right)
+    {
+        return !Equals(left, right);
     }
 
     /// <summary>
