@@ -571,7 +571,64 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
 
         size = newSize;
         _version += oldSize - newSize;
+    }
 
+    public void RemoveRange(int index, int count)
+    {
+        if (size <= 0 || index >= size || count <= 0) return;
+
+        if (index <= 0)
+        {
+            TruncateFirst(size - count);
+            return;
+        }
+        var toIndex = index + count;
+
+        if (toIndex >= size)
+        {
+            TruncateLast(size - count);
+            return;
+        }
+
+        if (head <= tail)
+        {
+            // tail is near the end, head is near the start
+            var tailMinusTo = tail + 1 - (head + toIndex);
+            if (tailMinusTo < 0) tailMinusTo += items.Length;
+            Array.Copy(items, head + toIndex, items, head + index, tailMinusTo);
+            Array.Clear(items, tail + 1 - count, count);
+            tail -= count;
+        }
+        else if (head + toIndex < items.Length)
+        {
+            // head is at the end, and tail wraps around, but we are only removing items between head and end
+            var headPlusFrom = head + index;
+            if (headPlusFrom >= items.Length) headPlusFrom -= items.Length;
+            Array.Copy(items, head, items, headPlusFrom, count);
+            Array.Clear(items, head, count);
+            head += count;
+        }
+        else if (head + toIndex - items.Length - count >= 0)
+        {
+            // head is at the end, and tail wraps around, but we are only removing items between start and tail
+            Array.Copy(items, head + toIndex - items.Length, items, head + index - items.Length,
+                tail + 1 - (head + toIndex - items.Length));
+            Array.Clear(items, tail + 1 - count, count);
+            tail -= count;
+        }
+        else
+        {
+            // head is at the end, tail wraps around, and we must remove items that wrap from end to start
+            Array.Copy(items, head, items, items.Length - index, index);
+            Array.Copy(items, head + toIndex - items.Length, items, 0,
+                tail + 1 - (head + toIndex - items.Length));
+            Array.Clear(items, head, items.Length - index - head);
+            Array.Clear(items, tail + 1 - (head + toIndex - items.Length), head + toIndex - items.Length);
+            tail -= (head + toIndex - items.Length);
+            head = (items.Length - index);
+        }
+        size -= count;
+        _version += count;
     }
 
     /// <summary>
