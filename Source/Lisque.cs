@@ -540,6 +540,34 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         _version++;
     }
 
+    /// <summary>
+    /// Reduces the size of the lisque to the specified size by bulk-removing from the head.
+    /// If the lisque is already smaller than the specified size, no action is taken.
+    /// </summary>
+    /// <param name="newSize">The size this lisque should have after this call completes, if smaller than the current size.</param>
+    public void TruncateFirst(int newSize) {
+        if (newSize <= 0) {
+            Clear();
+            return;
+        }
+        var oldSize = size;
+        if (oldSize <= newSize) return;
+        if (head <= tail || head + oldSize - newSize < items.Length) {
+            // only removing from head to head + newSize, which is contiguous
+            Array.Clear(items, head, oldSize - newSize);
+            head += oldSize - newSize;
+            if (head >= items.Length) head -= items.Length;
+        } else {
+            // tail is near the start, and we are removing from head to the end and then part near start
+            Array.Clear(items, head, items.Length - head);
+            head = tail + 1 - newSize;
+            Array.Clear(items, 0, head);
+        }
+
+        size = newSize;
+        _version += oldSize - newSize;
+    }
+
     public T this[int index]
     {
         get
