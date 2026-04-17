@@ -750,6 +750,20 @@ public class Lisque<T> : ILisque<T>
     }
 
     /// <summary>
+    /// Sorts a subregion of the lisque using the given IComparer of T.
+    /// </summary>
+    /// <remarks>
+    /// This performs an O(n) operation, <see cref="TrimExcess"/>, and then can perform a sort simply using
+    /// <see cref="Array.Sort(Array, int, int, IComparer?"/>, which takes O(n log(n)) time in the expected case.
+    /// </remarks>
+    public void Sort(int index, int count, IComparer<T>? comparer)
+    {
+        if(size <= 1) return;
+        TrimExcess();
+        Array.Sort(items, index, count, comparer);
+    }
+
+    /// <summary>
     /// Sorts the entire lisque using the given Comparison of T.
     /// </summary>
     /// <remarks>
