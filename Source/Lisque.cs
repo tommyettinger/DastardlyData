@@ -249,6 +249,40 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         }
         return default;
     }
+    
+    public int FindIndex(Predicate<T> match)
+        => FindIndex(0, size, match);
+
+    public int FindIndex(int startIndex, Predicate<T> match)
+        => FindIndex(startIndex, size - startIndex, match);
+
+    public int FindIndex(int startIndex, int count, Predicate<T> match)
+    {
+        if ((uint)startIndex > (uint)size)
+        {
+            throw new ArgumentOutOfRangeException(nameof(startIndex), "startIndex is too large.");
+        }
+
+        if (count < 0 || startIndex > size - count)
+        {
+            throw new ArgumentOutOfRangeException(nameof(count), "count is invalid.");
+        }
+
+        var wrap = startIndex + head;
+        if (wrap >= items.Length) wrap -= items.Length;
+        var end = startIndex + count;
+        for (int i = wrap, ii = startIndex; ii < end; ii++)
+        {
+            if (match(items[i]))
+            {
+                return ii;
+            }
+
+            ++i;
+            if (i >= items.Length) i = 0;
+        }
+        return -1;
+    }
 
     public void CopyTo(T[] array, int arrayIndex)
     {
