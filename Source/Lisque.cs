@@ -1067,6 +1067,10 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
     /// <param name="indexB">The second index to swap.</param>
     public void Swap(int indexA, int indexB)
     {
+        indexA += head;
+        if(indexA >= items.Length) indexA -= items.Length;
+        indexB += head;
+        if(indexB >= items.Length) indexB -= items.Length;
         (items[indexA], items[indexB]) = (items[indexB], items[indexA]);
     }
 
