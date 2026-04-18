@@ -745,6 +745,32 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         return result;
     }
 
+    /// <summary>
+    /// Creates a shallow copy of a range of elements in the source lisque.
+    /// </summary>
+    /// <param name="start">The zero-based index at which the range starts.</param>
+    /// <param name="length">The length of the range.</param>
+    /// <returns>A shallow copy of a range of elements in the source lisque.</returns>
+    public Lisque<T> Slice(int start, int length)
+    {
+        var result = new Lisque<T>(length);
+        if (head + start + length <= items.Length)
+        {
+            Array.Copy(items, head + start, result.items, 0, length);
+        }
+        else if(head + start >= items.Length)
+        {
+            Array.Copy(items, head + start - items.Length, result.items, 0, length);
+        }
+        else
+        {
+            Array.Copy(items, head + start, result.items, 0, items.Length - (head + start));
+            Array.Copy(items, 0, result.items, items.Length - (head + start), length - (items.Length - (head + start)));
+        }
+        result.tail = length - 1;
+
+        return result;
+    }
 
     public T this[int index]
     {
