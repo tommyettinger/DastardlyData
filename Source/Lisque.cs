@@ -676,6 +676,75 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
 
         return size != oldSize;
     }
+    
+    /// <summary>
+    /// Removes all the elements that match the conditions defined by the specified predicate.
+    /// If match returns true given a T item, that item will be removed.
+    /// </summary>
+    /// <remarks>
+    /// This operates in O(n) time.
+    /// </remarks>
+    /// <param name="match">The Predicate delegate that defines the conditions of the elements to remove.</param>
+    /// <returns>The number of elements removed from the lisque.</returns>
+    public int RemoveAll(Predicate<T> match)
+    {
+        var freeIndex = 0;   // the first free slot in items array
+        var wrapIndex = head;
+        // Find the first item which needs to be removed.
+        while (freeIndex < size && !match(items[wrapIndex]))
+        {
+            freeIndex++;
+            wrapIndex++;
+        }
+        if (freeIndex >= size) return 0;
+
+        var current = freeIndex + 1;
+        var wrapCurrent = wrapIndex + 1;
+        if(wrapCurrent >= items.Length) wrapCurrent = 0;
+        
+        while (current < size)
+        {
+            // Find the first item which needs to be kept.
+            while (current < size && match(items[wrapCurrent]))
+            {
+                current++;
+                wrapCurrent++;
+                if(wrapCurrent >= items.Length) wrapCurrent = 0;
+            }
+
+            if (current >= size) break;
+            // copy item to the free slot.
+            items[wrapIndex++] = items[wrapCurrent++];
+            freeIndex++;
+            current++;
+            if(wrapIndex >= items.Length) wrapIndex = 0;
+            if(wrapCurrent >= items.Length) wrapCurrent = 0;
+        }
+
+        if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
+        {
+            if(head <= tail)
+                Array.Clear(items, wrapIndex, size - freeIndex); // Clear the elements so that the gc can reclaim the references.
+            else
+            {
+                var deleteCount = size - freeIndex;
+                if(wrapIndex + deleteCount <= items.Length) 
+                    Array.Clear(items, wrapIndex, deleteCount);
+                else
+                {
+                    // The deleted range wraps.
+                    Array.Clear(items, wrapIndex, items.Length - wrapIndex);
+                    Array.Clear(items, 0, deleteCount - (items.Length - wrapIndex));
+                }
+            }
+        }
+
+        var result = size - freeIndex;
+        size = freeIndex;
+        _version++;
+        return result;
+    }
+
 
     public T this[int index]
     {
