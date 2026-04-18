@@ -340,6 +340,28 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         return -1;
     }
 
+    /// <summary>
+    /// Retrieves all the elements that match the conditions defined by the specified predicate.
+    /// </summary>
+    /// <param name="match">The Predicate of T delegate that defines the conditions of the elements to search for.</param>
+    /// <returns>A lisque of T containing all the elements that match the conditions defined by the specified
+    /// predicate, if found; otherwise, an empty lisque.</returns>
+    public Lisque<T> FindAll(Predicate<T> match)
+    {
+        var lisque = new Lisque<T>();
+        for (int i = head, ii = 0; ii < size; ii++)
+        {
+            if (match(items[i]))
+            {
+                lisque.Add(items[i]);
+            }
+
+            ++i;
+            if (i >= items.Length) i = 0;
+        }
+
+        return lisque;
+    }
 
     public void CopyTo(T[] array, int arrayIndex)
     {
