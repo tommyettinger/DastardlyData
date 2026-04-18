@@ -227,6 +227,28 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         return Array.IndexOf(items, item, 0, tail + 1) >= 0 ||
                Array.IndexOf(items, item, head, items.Length - head) >= 0;
     }
+    
+    /// <summary>
+    /// Searches for an element that matches the conditions defined by the specified predicate, and returns the
+    /// first occurrence within the entire lisque.
+    /// </summary>
+    /// <param name="match">The Predicate of T delegate that defines the conditions of the element to search for.</param>
+    /// <returns>The first element that matches the conditions defined by the specified predicate, if found;
+    /// otherwise, the default value for type T.</returns>
+    public T? Find(Predicate<T> match)
+    {
+        for (int i = head, ii = 0; ii < size; ii++)
+        {
+            if (match(items[i]))
+            {
+                return items[i];
+            }
+
+            ++i;
+            if (i >= items.Length) i = 0;
+        }
+        return default;
+    }
 
     public void CopyTo(T[] array, int arrayIndex)
     {
