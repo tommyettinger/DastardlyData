@@ -541,6 +541,35 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
     }
 
     /// <summary>
+    /// Reduces the size of the lisque to the specified size by bulk-removing from the head.
+    /// If the lisque is already smaller than the specified size, no action is taken.
+    /// </summary>
+    /// <param name="newSize">The size this lisque should have after this call completes, if smaller than the current size.</param>
+    public void TruncateFirst(int newSize) {
+        if (newSize <= 0) {
+            Clear();
+            return;
+        }
+        var oldSize = size;
+        if (oldSize <= newSize) return;
+        if (head <= tail || head + oldSize - newSize < items.Length) {
+            // only removing from head to head + newSize, which is contiguous
+            Array.Clear(items, head, oldSize - newSize);
+            head += oldSize - newSize;
+            if (head >= items.Length) head -= items.Length;
+        } else {
+            // tail is near the start, and we are removing from head to the end and then part near start
+            Array.Clear(items, head, items.Length - head);
+            head = tail + 1 - newSize;
+            Array.Clear(items, 0, head);
+        }
+
+        size = newSize;
+        _version += oldSize - newSize;
+    }
+
+
+    /// <summary>
     /// Reduces the size of the lisque to the specified size by bulk-removing from the tail.
     /// If the lisque is already smaller than the specified size, no action is taken.
     /// </summary>
@@ -632,31 +661,20 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
     }
 
     /// <summary>
-    /// Reduces the size of the lisque to the specified size by bulk-removing from the head.
-    /// If the lisque is already smaller than the specified size, no action is taken.
+    /// Removes from this lisque each element as it appears in toRemove, with duplicates in toRemove
+    /// getting (attempted to be) removed multiple times.
     /// </summary>
-    /// <param name="newSize">The size this lisque should have after this call completes, if smaller than the current size.</param>
-    public void TruncateFirst(int newSize) {
-        if (newSize <= 0) {
-            Clear();
-            return;
-        }
+    /// <param name="toRemove">Any IEnumerable of T items to remove from this lisque, with duplicates getting removed multiple times.</param>
+    /// <returns>If any item was removed, true, otherwise false.</returns>
+    public bool RemoveEach(IEnumerable<T> toRemove)
+    {
         var oldSize = size;
-        if (oldSize <= newSize) return;
-        if (head <= tail || head + oldSize - newSize < items.Length) {
-            // only removing from head to head + newSize, which is contiguous
-            Array.Clear(items, head, oldSize - newSize);
-            head += oldSize - newSize;
-            if (head >= items.Length) head -= items.Length;
-        } else {
-            // tail is near the start, and we are removing from head to the end and then part near start
-            Array.Clear(items, head, items.Length - head);
-            head = tail + 1 - newSize;
-            Array.Clear(items, 0, head);
+        foreach (var t in toRemove)
+        {
+            Remove(t);
         }
 
-        size = newSize;
-        _version += oldSize - newSize;
+        return size != oldSize;
     }
 
     public T this[int index]
