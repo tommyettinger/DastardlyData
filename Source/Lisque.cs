@@ -306,6 +306,41 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         return default;
     }
 
+    public int FindLastIndex(Predicate<T> match)
+        => FindLastIndex(size - 1, size, match);
+
+    public int FindLastIndex(int startIndex, Predicate<T> match)
+        => FindLastIndex(startIndex, startIndex + 1, match);
+
+    public int FindLastIndex(int startIndex, int count, Predicate<T> match)
+    {
+        if ((uint)startIndex >= (uint)size)
+        {
+            throw new ArgumentOutOfRangeException(nameof(startIndex), "startIndex is too large.");
+        }
+
+        if (count < 0 || startIndex > size - count)
+        {
+            throw new ArgumentOutOfRangeException(nameof(count), "count is invalid.");
+        }
+
+        var wrap = startIndex + tail;
+        if (wrap >= items.Length) wrap -= items.Length;
+        var end = startIndex - count;
+        for (int i = wrap, ii = startIndex; ii > end; ii--)
+        {
+            if (match(items[i]))
+            {
+                return ii;
+            }
+
+            --i;
+            if (i < 0) i = items.Length - 1;
+        }
+        return -1;
+    }
+
+
     public void CopyTo(T[] array, int arrayIndex)
     {
         if (head <= tail)
