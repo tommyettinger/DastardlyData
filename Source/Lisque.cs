@@ -283,6 +283,28 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         }
         return -1;
     }
+    
+    /// <summary>
+    /// Searches for an element that matches the conditions defined by the specified predicate, and returns the
+    /// last occurrence within the entire lisque.
+    /// </summary>
+    /// <param name="match">The Predicate of T delegate that defines the conditions of the element to search for.</param>
+    /// <returns>The last element that matches the conditions defined by the specified predicate, if found;
+    /// otherwise, the default value for type T.</returns>
+    public T? FindLast(Predicate<T> match)
+    {
+        for (int i = tail, ii = 0; ii < size; ii++)
+        {
+            if (match(items[i]))
+            {
+                return items[i];
+            }
+
+            --i;
+            if (i < 0) i = items.Length - 1;
+        }
+        return default;
+    }
 
     public void CopyTo(T[] array, int arrayIndex)
     {
