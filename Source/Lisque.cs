@@ -1077,6 +1077,17 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         (items[indexA], items[indexB]) = (items[indexB], items[indexA]);
     }
 
+    public void Reverse() => Reverse(0, size);
+
+    public void Reverse(int start, int length)
+    {
+        var halfLength = length / 2;
+        for (int i = start, j = start + length - 1, c = 0; c < halfLength; i++, j--, c++)
+        {
+            Swap(i, j);
+        }
+    }
+
     /// <summary>
     /// Sorts the entire lisque using the default comparison for T.
     /// </summary>
