@@ -1161,6 +1161,44 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         }
     }
 
+    public int BinarySearch(int index, int count, T item, IComparer<T>? comparer)
+    {
+        
+        if (index < 0)
+            throw new ArgumentOutOfRangeException(nameof(index));
+        if (count < 0)
+            throw new ArgumentOutOfRangeException(nameof(count));
+        if (size - index < count)
+            throw new ArgumentException("index + count is too large for the size of the lisque."); 
+
+        if(head <= tail || head + index + count <= items.Length)
+        {
+            var found = Array.BinarySearch(items, index + head, count, item, comparer);
+            if(found >= 0) return found - head;
+            return found + head;
+        } 
+        if(head + index >= items.Length)
+        {
+            var found = Array.BinarySearch(items, index - (items.Length - head), count, item, comparer);
+            if(found >= 0) return found + (items.Length - head);
+            return found - (items.Length - head);
+        }
+        else
+        {
+            var found = Array.BinarySearch(items, index + head, items.Length - head, item, comparer);
+            if(found >= 0) return found - head;
+            found = Array.BinarySearch(items, 0, count - (items.Length - head), item, comparer);
+            if(found >= 0) return found + (items.Length - head);
+            return found - (items.Length - head);
+        }
+    }
+    
+    public int BinarySearch(T item)
+        => BinarySearch(0, Count, item, null);
+
+    public int BinarySearch(T item, IComparer<T>? comparer)
+        => BinarySearch(0, Count, item, comparer);
+
     public T First
     {
         get => size == 0 ? throw new InvalidOperationException("Lisque is empty.") : items[head];
