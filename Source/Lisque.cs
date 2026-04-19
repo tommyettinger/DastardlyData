@@ -1463,6 +1463,12 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         head = 0;
         tail = items.Length - 1;
     }
+    
+    public int Capacity
+    {
+        get => items.Length;
+        set => Resize(value);
+    }
 
     private struct Enumerator : IEnumerator<T>
     {
