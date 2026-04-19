@@ -227,6 +227,9 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         return Array.IndexOf(items, item, 0, tail + 1) >= 0 ||
                Array.IndexOf(items, item, head, items.Length - head) >= 0;
     }
+
+    public bool Exists(Predicate<T> match)
+        => FindIndex(match) != -1;
     
     /// <summary>
     /// Searches for an element that matches the conditions defined by the specified predicate, and returns the
