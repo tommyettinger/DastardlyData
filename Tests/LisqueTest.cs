@@ -3,6 +3,57 @@ using Dastardly.Data;
 namespace Tests;
 
 public class Tests {
+    private static Lisque<string> GenerateFull() 
+    {
+        Lisque<string> lisque = new(8);
+        lisque.Add("alpha");
+        lisque.Add("beta");
+        lisque.Add("gamma");
+        lisque.Add("delta");
+        lisque.Add("epsilon");
+        lisque.Add("zeta");
+        lisque.Add("eta");
+        lisque.Add("theta");
+        return lisque;
+    }
+
+    private static Lisque<string> GeneratePartial() 
+    {
+        Lisque<string> lisque = new(8);
+        lisque.Add("alpha");
+        lisque.Add("beta");
+        lisque.Add("gamma");
+        lisque.Add("delta");
+        lisque.Add("epsilon");
+        lisque.Add("zeta");
+        return lisque;
+    }
+
+    private static Lisque<string> GeneratePartialMissingFirst() 
+    {
+        Lisque<string> lisque = new(8);
+        lisque.Add("");
+        lisque.Add("alpha");
+        lisque.Add("beta");
+        lisque.Add("gamma");
+        lisque.Add("delta");
+        lisque.Add("epsilon");
+        lisque.Add("zeta");
+        lisque.RemoveAt(0);
+        return lisque;
+    }
+
+    private static Lisque<string> GeneratePartialWrapped() 
+    {
+        Lisque<string> lisque = new(8);
+        lisque.Add("gamma");
+        lisque.Add("delta");
+        lisque.Add("epsilon");
+        lisque.Add("zeta");
+        lisque.PushFirst("beta");
+        lisque.PushFirst("alpha");
+        return lisque;
+    }
     
     [SetUp]
     public void Setup() {
