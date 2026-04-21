@@ -55,6 +55,9 @@ public class Tests {
         return lisque;
     }
     
+    private static Lisque<string>[] GenerateAll() => [GenerateFull(), GeneratePartial(),
+        GeneratePartialMissingFirst(), GeneratePartialWrapped()];
+    
     [SetUp]
     public void Setup() {
 
@@ -118,11 +121,11 @@ public class Tests {
     [Test]
     public void TestIndexOf()
     {
-        Lisque<string> lisque = new([
+        Lisque<string> lisque = [
             "alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta",
             "alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta",
             "alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta"
-        ]);
+        ];
         Assert.That(lisque.IndexOf("alpha"), Is.EqualTo(0));
         Assert.That(lisque.IndexOf("beta"), Is.EqualTo(1));
         Assert.That(lisque.IndexOf("beta", 2), Is.EqualTo(8));
@@ -138,9 +141,9 @@ public class Tests {
     [Test]
     public void TestIndexOfWrapping()
     {
-        Lisque<string> lisque = new([                 "gamma",  "delta", "epsilon", "zeta", "eta",
+        Lisque<string> lisque = [                     "gamma",  "delta", "epsilon", "zeta", "eta",
                                      "alpha", "beta", "gamma",  "delta", "epsilon", "zeta", "eta",
-                                     "alpha", "beta", "gamma",  "delta", "epsilon", "zeta", "eta"]);
+                                     "alpha", "beta", "gamma",  "delta", "epsilon", "zeta", "eta"];
         // makes head wrap around.
         lisque.AddRangeFirst(["alpha", "beta"]);
         Assert.That(lisque.IndexOf("alpha"), Is.EqualTo(0));
@@ -153,5 +156,25 @@ public class Tests {
         Assert.That(lisque.LastIndexOf("beta", 7), Is.EqualTo(1));
         Assert.That(lisque.LastIndexOf("beta", 20, 4), Is.EqualTo(-1));
         Assert.That(lisque.LastIndexOf("beta", 20, 20), Is.EqualTo(15));
+    }
+
+    [Test]
+    public void TestListEquivalence()
+    {
+        var lisques = GenerateAll();
+        List<string>[] lists = [new(lisques[0]), new(lisques[1]), new(lisques[2]), new(lisques[3])];
+        for (int i = 0; i < 4; i++)
+        {
+            Assert.That(lisques[i], Is.EqualTo(lists[i]));
+            lisques[i].Reverse();
+            lists[i].Reverse();
+            Assert.That(lisques[i], Is.EqualTo(lists[i]));
+            lisques[i].Reverse(2, 3);
+            lists[i].Reverse(2, 3);
+            Assert.That(lisques[i], Is.EqualTo(lists[i]));
+            lisques[i].Sort();
+            lists[i].Sort();
+            Assert.That(lisques[i], Is.EqualTo(lists[i]));
+        }
     }
 }
