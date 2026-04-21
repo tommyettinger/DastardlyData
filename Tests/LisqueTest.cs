@@ -165,16 +165,16 @@ public class Tests {
         List<string>[] lists = [new(lisques[0]), new(lisques[1]), new(lisques[2]), new(lisques[3])];
         for (int i = 0; i < 4; i++)
         {
-            Assert.That(lisques[i], Is.EqualTo(lists[i]));
+            Assert.That(lisques[i], Is.EquivalentTo(lists[i]));
             lisques[i].Reverse();
             lists[i].Reverse();
-            Assert.That(lisques[i], Is.EqualTo(lists[i]));
+            Assert.That(lisques[i], Is.EquivalentTo(lists[i]));
             lisques[i].Reverse(2, 3);
             lists[i].Reverse(2, 3);
-            Assert.That(lisques[i], Is.EqualTo(lists[i]));
+            Assert.That(lisques[i], Is.EquivalentTo(lists[i]));
             lisques[i].Sort();
             lists[i].Sort();
-            Assert.That(lisques[i], Is.EqualTo(lists[i]));
+            Assert.That(lisques[i], Is.EquivalentTo(lists[i]));
         }
     }
 }

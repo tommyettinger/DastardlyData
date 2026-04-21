@@ -1081,6 +1081,9 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
 
     public void Reverse(int start, int length)
     {
+        if(start < 0) throw new ArgumentOutOfRangeException(nameof(start));
+        if(length < 0) throw new ArgumentOutOfRangeException(nameof(start));
+        if(size - start < length) throw new ArgumentException("Not enough elements available after start for the requested length.");
         var halfLength = length / 2;
         for (int i = start, j = start + length - 1, c = 0; c < halfLength; i++, j--, c++)
         {
