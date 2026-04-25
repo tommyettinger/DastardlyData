@@ -1370,6 +1370,27 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         return lisque;
     }
 
+    /// <summary>
+    /// Performs the specified action on each element of the lisque.
+    /// </summary>
+    /// <param name="action">The Action{T} delegate to perform on each element of the lisque.</param>
+    /// <exception cref="InvalidOperationException">An element in the collection has been modified.</exception>
+    public void ForEach(Action<T> action)
+    {
+        var version = _version;
+
+        for (var i = 0; i < size; i++)
+        {
+            if (version != _version)
+            {
+                break;
+            }
+            action(this[i]);
+        }
+
+        if (version != _version)
+            throw new InvalidOperationException("Lisque was modified externally during ForEach() call."); 
+    }
 
     public T First
     {
