@@ -510,9 +510,16 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         }
         else
         {
-            var cnt = Math.Min(count, items.Length - head - index);
-            var idx = Array.IndexOf(items, item, head + index, cnt);
-            if (idx != -1) return idx - head;
+            var h = head + index;
+            if (h >= items.Length) h -= items.Length;
+            var cnt = Math.Min(count, items.Length - h);
+            var idx = Array.IndexOf(items, item, h, cnt);
+            if (idx != -1)
+            {
+                idx -= head;
+                if(idx < 0) idx += items.Length;
+                return idx;
+            }
             if (count <= cnt) return -1;
             idx = Array.IndexOf(items, item, 0, Math.Min(tail + 1, count - cnt));
             if (idx == -1) return -1;
@@ -545,13 +552,22 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         }
         else
         {
-            var cnt = Math.Min(count, items.Length - head + index);
-            var idx = Array.LastIndexOf(items, item, head + index, cnt);
-            if (idx != -1) return idx - head;
-            if (count <= cnt) return -1;
-            idx = Array.LastIndexOf(items, item, 0, Math.Min(tail + 1, count - cnt));
-            if (idx == -1) return -1;
-            return idx + items.Length - head;
+            var i = head + index;
+            if(i >= items.Length) i -= items.Length;
+            var cnt = i - count;
+            int idx;
+            if(cnt <= 0)
+            {
+                idx = Array.LastIndexOf(items, item, i, i);
+                if (idx != -1) return idx + items.Length - head;
+                idx = Array.LastIndexOf(items, item, items.Length - 1, count - i);
+                if (idx == -1) return -1;
+                return idx - head;
+            }
+
+            idx = Array.LastIndexOf(items, item, i, count);
+            if (idx != -1) return idx + items.Length - head;
+            return -1;
         }
     }
 

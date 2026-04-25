@@ -145,7 +145,8 @@ public class Tests {
                                      "alpha", "beta", "gamma",  "delta", "epsilon", "zeta", "eta",
                                      "alpha", "beta", "gamma",  "delta", "epsilon", "zeta", "eta"];
         // makes head wrap around.
-        lisque.AddRangeFirst(["alpha", "beta"]);
+        lisque.PushFirst("beta");
+        lisque.PushFirst("alpha");
         Assert.That(lisque.IndexOf("alpha"), Is.EqualTo(0));
         Assert.That(lisque.IndexOf("beta"), Is.EqualTo(1));
         Assert.That(lisque.IndexOf("beta", 2), Is.EqualTo(8));
@@ -156,6 +157,8 @@ public class Tests {
         Assert.That(lisque.LastIndexOf("beta", 7), Is.EqualTo(1));
         Assert.That(lisque.LastIndexOf("beta", 20, 4), Is.EqualTo(-1));
         Assert.That(lisque.LastIndexOf("beta", 20, 20), Is.EqualTo(15));
+        Assert.That(lisque.LastIndexOf("beta", 2, 2), Is.EqualTo(1));
+        Assert.That(lisque.LastIndexOf("beta", 8, 8), Is.EqualTo(8));
     }
 
     [Test]
