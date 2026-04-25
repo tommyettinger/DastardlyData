@@ -468,6 +468,84 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         return true;
     }
 
+
+    /// <summary>
+    /// Removes the last occurrence of a specific object from the lisque.
+    /// </summary>
+    /// <param name="item">The object to remove from the lisque.</param>
+    /// <returns>true if item was successfully removed from the lisque; otherwise, false.
+    /// This method also returns false if item is not found in the original lisque.</returns>
+    public bool RemoveLast(T item)
+    {
+        if (size == 0) return false;
+        var index = LastIndexOf(item);
+        if (index == -1) return false;
+
+        if (index == 0)
+        {
+            items[head] = default!;
+            head++;
+            if (head == items.Length)
+            {
+                head = 0;
+            }
+
+            if (--size <= 1) tail = head;
+        }
+        else if (index >= size - 1)
+        {
+            items[tail] = default!;
+
+            if (tail == 0)
+            {
+                tail = items.Length - 1;
+            }
+            else
+            {
+                --tail;
+            }
+
+            if (--size <= 1) tail = head;
+        }
+        else
+        {
+            index += head;
+            if (head <= tail)
+            {
+                // index is between head and tail.
+                Array.Copy(items, index + 1, items, index, tail - index);
+                items[tail] = default!;
+                tail--;
+                if (tail == -1) tail = items.Length - 1;
+            }
+            else if (index >= items.Length)
+            {
+                // index is between 0 and tail.
+                index -= items.Length;
+                Array.Copy(items, index + 1, items, index, tail - index);
+                items[tail] = default!;
+                tail--;
+                if (tail == -1) tail = items.Length - 1;
+            }
+            else
+            {
+                // index is between head and values.Length.
+                Array.Copy(items, head, items, head + 1, index - head);
+                items[head] = default!;
+                head++;
+                if (head == items.Length)
+                {
+                    head = 0;
+                }
+            }
+
+            size--;
+        }
+
+        _version++;
+        return true;
+    }
+
     public int Count => size;
     public bool IsReadOnly => false;
 
