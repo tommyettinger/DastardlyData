@@ -1309,6 +1309,46 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
 
     public int BinarySearch(T item, IComparer<T>? comparer)
         => BinarySearch(0, Count, item, comparer);
+    
+    /// <summary>
+    /// Determines whether every element in the lisque matches the conditions defined by the specified predicate.
+    /// </summary>
+    /// <param name="match">The Predicate delegate that defines the conditions to check against the elements.</param>
+    /// <returns>true if every element in the lisque matches the conditions defined by the specified predicate;
+    /// otherwise, false. If the lisque has no elements, the return value is true.</returns>
+    public bool TrueForAll(Predicate<T> match)
+    {
+        if(head <= tail)
+        {
+            for (var i = head; i <= tail; i++)
+            {
+                if (!match(items[i]))
+                {
+                    return false;
+                }
+            }
+        }
+        else
+        {
+            for (var i = head; i < items.Length; i++)
+            {
+                if (!match(items[i]))
+                {
+                    return false;
+                }
+            }
+            for (var i = 0; i <= tail; i++)
+            {
+                if (!match(items[i]))
+                {
+                    return false;
+                }
+
+            }
+        }
+        return true;
+    }
+
 
     public T First
     {
