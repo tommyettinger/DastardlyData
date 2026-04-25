@@ -1349,6 +1349,27 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         return true;
     }
 
+    /// <summary>
+    /// Converts the elements in the current lisque to another type, and returns a lisque containing
+    /// the converted elements.
+    /// </summary>
+    /// <param name="converter">A Converter{TInput,TOutput} delegate that converts each element from one type
+    /// to another type.</param>
+    /// <typeparam name="TOutput">The type of the elements of the target lisque.</typeparam>
+    /// <returns>A Lisque{TOutput} of the target type containing the converted elements from the current Lisque{T}.</returns>
+    public Lisque<TOutput> ConvertAll<TOutput>(Converter<T, TOutput> converter)
+    {
+        var lisque = new Lisque<TOutput>(size);
+        for (var i = 0; i < size; i++)
+        {
+            lisque.items[i] = converter(this[i]);
+        }
+
+        lisque.size = size;
+        lisque.tail = size - 1;
+        return lisque;
+    }
+
 
     public T First
     {
