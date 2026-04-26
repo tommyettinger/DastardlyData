@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 
 namespace Dastardly.Data;
@@ -1391,7 +1392,14 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         if (version != _version)
             throw new InvalidOperationException("Lisque was modified externally during ForEach() call."); 
     }
-
+    
+    /// <summary>
+    /// Returns a read-only ReadOnlyCollection wrapper for the current collection.
+    /// </summary>
+    /// <returns>An object that acts as a read-only wrapper around the current lisque.</returns>
+    public ReadOnlyCollection<T> AsReadOnly()
+        => new(this);
+    
     public T First
     {
         get => size == 0 ? throw new InvalidOperationException("Lisque is empty.") : items[head];
