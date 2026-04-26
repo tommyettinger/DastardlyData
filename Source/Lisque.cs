@@ -378,6 +378,27 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         }
     }
 
+    public void CopyTo(int index, T[] array, int arrayIndex, int count)
+    {
+        if (head <= tail)
+            Array.Copy(items, head + index, array, arrayIndex, count);
+        else
+        {
+            var headCount = Math.Min(count, items.Length - head - index);
+            var tailCount = count - headCount;
+            if (head + index < items.Length)
+            {
+                Array.Copy(items, head + index, array, arrayIndex, headCount);
+                if (tailCount > 0)
+                    Array.Copy(items, 0, array, arrayIndex + items.Length - head, tailCount);
+            }
+            else
+            {
+                Array.Copy(items, head + index - items.Length, array, arrayIndex, count);
+            }
+        }
+    }
+
     public bool Remove(T item)
     {
         if (size == 0) return false;
