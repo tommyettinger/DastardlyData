@@ -1049,6 +1049,13 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
 
         return result;
     }
+    /// <summary>
+    /// Creates a shallow copy of a range of elements in the source lisque.
+    /// </summary>
+    /// <param name="index">The zero-based index at which the range starts.</param>
+    /// <param name="count">The length of the range.</param>
+    /// <returns>A shallow copy of a range of elements in the source lisque.</returns>
+    public Lisque<T> GetRange(int index, int count) => Slice(index, count);
 
     public T this[int index]
     {
