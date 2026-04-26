@@ -367,6 +367,13 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         return lisque;
     }
 
+    /// <summary>
+    /// Copies the entire lisque to a compatible one-dimensional array, starting
+    /// at the specified index of the target array.
+    /// </summary>
+    /// <param name="array">The one-dimensional Array that is the destination of the elements copied from
+    /// this lisque. The Array must have zero-based indexing.</param>
+    /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
     public void CopyTo(T[] array, int arrayIndex)
     {
         if (head <= tail)
@@ -378,6 +385,15 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         }
     }
 
+    /// <summary>
+    /// Copies a range of elements from the List{T} to a compatible one-dimensional array, starting
+    /// at the specified index of the target array.
+    /// </summary>
+    /// <param name="index">The zero-based index in the source lisque at which copying begins.</param>
+    /// <param name="array">The one-dimensional Array that is the destination of the elements copied
+    /// from this lisque. The Array must have zero-based indexing.</param>
+    /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
+    /// <param name="count">The number of elements to copy.</param>
     public void CopyTo(int index, T[] array, int arrayIndex, int count)
     {
         if (head <= tail)
@@ -398,6 +414,14 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
             }
         }
     }
+    
+    /// <summary>
+    /// Copies the entire lisque to a compatible one-dimensional array, starting
+    /// at the beginning of the target array.
+    /// </summary>
+    /// <param name="array">The one-dimensional Array that is the destination of the elements copied from
+    /// this lisque. The Array must have zero-based indexing.</param>
+    public void CopyTo(T[] array) => CopyTo(array, 0);
 
     public bool Remove(T item)
     {
