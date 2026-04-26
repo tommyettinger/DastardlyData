@@ -179,7 +179,7 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
                 }
                 tail += oldSize;
                 size += oldSize;
-                _version += oldSize;
+                _version += cs;
             } else {
                 foreach (var t in c)
                 {
@@ -194,6 +194,51 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
                 Add(t);
             }
 
+        }
+    }
+    
+    /// <summary>
+    /// Inserts the elements of a collection into the lisque at the specified index.
+    /// </summary>
+    /// <param name="index">The zero-based index at which the new elements should be inserted.</param>
+    /// <param name="collection">An IEnumerable of T or, preferably, an ICollection of T.</param>
+    /// <exception cref="ArgumentNullException">The given collection is null.</exception>
+    public void InsertRange(int index, IEnumerable<T> collection)
+    {
+        ArgumentNullException.ThrowIfNull(collection);
+        var oldSize = size;
+        if (index <= 0)
+            AddRangeFirst(collection);
+        else if (index >= oldSize)
+            AddRangeLast(collection);
+        else
+        {
+            if (collection is ICollection<T> c)
+            {
+                var cs = c.Count;
+                if (cs == 0) return;
+                var place = EnsureGap(index, cs);
+                if (ReferenceEquals(collection, this))
+                {
+                    Array.Copy(items, head, items, place, place - head);
+                    Array.Copy(items, place + cs, items, place + place - head, tail + 1 - place - cs);
+                } else {
+                    foreach (var item in c)
+                    {
+                        items[place++] = item;
+                        if (place >= items.Length) place -= items.Length;
+                    }
+                }
+                size += cs;
+                _version += cs;
+            }
+            else
+            {
+                foreach (var item in collection)
+                {
+                    Insert(index++, item);
+                }
+            }
         }
     }
 
