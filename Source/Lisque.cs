@@ -745,8 +745,15 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
     }
 
     public int Count => _size;
+    
     public bool IsReadOnly => false;
 
+    /// <summary>
+    /// Searches for the specified object and returns the zero-based index of the first occurrence within the entire
+    /// lisque, or -1 if not found.
+    /// </summary>
+    /// <param name="item">The object to locate in the lisque.</param>
+    /// <returns>The zero-based index of the first occurrence of the given item, or -1 if not found.</returns>
     public int IndexOf(T item)
     {
         if (_size == 0) return -1;
@@ -766,11 +773,27 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         }
     }
 
+    /// <summary>
+    /// Searches for the specified object and returns the zero-based index of the first occurrence within the range
+    /// of elements in the lisque that extends from the specified index to the last element, or -1 if not found.
+    /// </summary>
+    /// <param name="item">The object to locate in the lisque.</param>
+    /// <param name="index">The zero-based first index to search in.</param>
+    /// <returns>The zero-based index of the first occurrence of the given item, or -1 if not found.</returns>
     public int IndexOf(T item, int index)
     {
         return IndexOf(item, index, _size - index);
     }
     
+    /// <summary>
+    /// Searches for the specified object and returns the zero-based index of the first occurrence within the range
+    /// of elements in the lisque that extends from the specified index for the specified count of items, or
+    /// -1 if not found.
+    /// </summary>
+    /// <param name="item">The object to locate in the lisque.</param>
+    /// <param name="index">The zero-based first index to search in.</param>
+    /// <param name="count">How many items to search through.</param>
+    /// <returns>The zero-based index of the first occurrence of the given item, or -1 if not found.</returns>
     public int IndexOf(T item, int index, int count)
     {
         if (index > _size || index < 0)
@@ -803,16 +826,38 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         }
     }
 
+    /// <summary>
+    /// Searches for the specified object and returns the zero-based index of the last occurrence within the entire
+    /// lisque, or -1 if not found.
+    /// </summary>
+    /// <param name="item">The object to locate in the lisque.</param>
+    /// <returns>The zero-based index of the last occurrence of the given item, or -1 if not found.</returns>
     public int LastIndexOf(T item)
     {
         return LastIndexOf(item, _size - 1, _size);
     }
 
+    /// <summary>
+    /// Searches for the specified object and returns the zero-based index of the last occurrence within the range
+    /// of elements in the lisque that extends from the specified index to the first element, or -1 if not found.
+    /// </summary>
+    /// <param name="item">The object to locate in the lisque.</param>
+    /// <param name="index">The zero-based last index to search in, going toward the start of the lisque.</param>
+    /// <returns>The zero-based index of the last occurrence of the given item, or -1 if not found.</returns>
     public int LastIndexOf(T item, int index)
     {
         return LastIndexOf(item, index, index + 1);
     }
 
+    /// <summary>
+    /// Searches for the specified object and returns the zero-based index of the last occurrence within the range
+    /// of elements in the lisque that extends from the specified index for the specified count of items toward the
+    /// start of the lisque, or -1 if not found.
+    /// </summary>
+    /// <param name="item">The object to locate in the lisque.</param>
+    /// <param name="index">The zero-based last index to search in, going toward the start of the lisque.</param>
+    /// <param name="count">How many items to search through, from index going toward the start of the lisque.</param>
+    /// <returns>The zero-based index of the last occurrence of the given item, or -1 if not found.</returns>
     public int LastIndexOf(T item, int index, int count)
     {
         if (index > _size || index < 0)
