@@ -75,6 +75,10 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         return new Enumerator(this);
     }
 
+    /// <summary>
+    /// Adds an item to the lisque at the end. This is equivalent to <see cref="PushLast(T)"/>.
+    /// </summary>
+    /// <param name="item">The object to be added to the end of the lisque.</param>
     public void Add(T item)
     {
         PushLast(item);
@@ -143,7 +147,8 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
     /// Adds every T in the given IEnumerable to this Lisque at the end, keeping the same order.
     /// </summary>
     /// <remarks>
-    /// Unlike <see cref="AddRangeFirst"/>, this performs in <c>O(m)</c> time, unless the capacity
+    /// Unlike <see cref="AddRangeFirst"/>, this performs in <c>O(m)</c> time,
+    /// where n is the size of this Lisque and m is the Count of collection, unless the capacity
     /// must be increased. Then, it performs in <c>O(n + m)</c> time. This simply calls
     /// <see cref="AddRange"/> with the same parameter.
     /// </remarks>
@@ -157,7 +162,8 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
     /// Adds every T in the given IEnumerable to this Lisque at the end, keeping the same order.
     /// </summary>
     /// <remarks>
-    /// Unlike <see cref="AddRangeFirst"/>, this performs in <c>O(m)</c> time, unless the capacity
+    /// Unlike <see cref="AddRangeFirst"/>, this performs in <c>O(m)</c> time,
+    /// where n is the size of this Lisque and m is the Count of collection, unless the capacity
     /// must be increased. Then, it performs in <c>O(n + m)</c> time.
     /// </remarks>
     /// <param name="collection">An IEnumerable of T or, preferably, an ICollection of T.</param>
@@ -205,6 +211,13 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
     /// <summary>
     /// Inserts the elements of a collection into the lisque at the specified index.
     /// </summary>
+    /// <remarks>
+    /// Like <see cref="AddRangeFirst"/>, this performs much better when given an ICollection, not just an IEnumerable.
+    /// For an ICollection parameter, this operates in <c>O(n + m)</c> time,
+    /// where n is the size of this Lisque and m is the Count of collection.
+    /// If the parameter only implements IEnumerablem performance degrades to <c>O(nm)</c> time because this doesn't
+    /// know how many T items there will be in the IEnumerable.
+    /// </remarks>
     /// <param name="index">The zero-based index at which the new elements should be inserted.</param>
     /// <param name="collection">An IEnumerable of T or, preferably, an ICollection of T.</param>
     /// <exception cref="ArgumentNullException">The given collection is null.</exception>
@@ -247,6 +260,13 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         }
     }
 
+    /// <summary>
+    /// Removes all items from this lisque and sets its size to 0. Its capacity does not change.
+    /// </summary>
+    /// <remarks>
+    /// If the item type is a reference type, this performs in O(n) time.
+    /// If the item type is a value type, this performs in O(1) time.
+    /// </remarks>
     public void Clear()
     {
         if (_size <= 0) return;
