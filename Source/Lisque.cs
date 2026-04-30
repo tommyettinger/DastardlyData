@@ -1135,6 +1135,11 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         _version += oldSize - newSize;
     }
 
+    /// <summary>
+    /// Removes the given count of items starting at the given index.
+    /// </summary>
+    /// <param name="index">The first index to remove; may be 0 or less to remove from the start.</param>
+    /// <param name="count">How many items to remove, starting at index.</param>
     public void RemoveRange(int index, int count)
     {
         if (_size <= 0 || index >= _size || count <= 0) return;
@@ -1148,17 +1153,17 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
 
         if (toIndex >= _size)
         {
-            TruncateLast(_size - count);
             return;
         }
 
+        bool hasRefs = RuntimeHelpers.IsReferenceOrContainsReferences<T>();
         if (_head <= _tail)
         {
             // tail is near the end, head is near the start
             var tailMinusTo = _tail + 1 - (_head + toIndex);
             if (tailMinusTo < 0) tailMinusTo += _items.Length;
             Array.Copy(_items, _head + toIndex, _items, _head + index, tailMinusTo);
-            Array.Clear(_items, _tail + 1 - count, count);
+            if(hasRefs) Array.Clear(_items, _tail + 1 - count, count);
             _tail -= count;
         }
         else if (_head + toIndex < _items.Length)
@@ -1167,7 +1172,7 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
             var headPlusFrom = _head + index;
             if (headPlusFrom >= _items.Length) headPlusFrom -= _items.Length;
             Array.Copy(_items, _head, _items, headPlusFrom, count);
-            Array.Clear(_items, _head, count);
+            if(hasRefs) Array.Clear(_items, _head, count);
             _head += count;
         }
         else if (_head + toIndex - _items.Length - count >= 0)
@@ -1175,7 +1180,7 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
             // head is at the end, and tail wraps around, but we are only removing items between start and tail
             Array.Copy(_items, _head + toIndex - _items.Length, _items, _head + index - _items.Length,
                 _tail + 1 - (_head + toIndex - _items.Length));
-            Array.Clear(_items, _tail + 1 - count, count);
+            if(hasRefs) Array.Clear(_items, _tail + 1 - count, count);
             _tail -= count;
         }
         else
@@ -1184,8 +1189,12 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
             Array.Copy(_items, _head, _items, _items.Length - index, index);
             Array.Copy(_items, _head + toIndex - _items.Length, _items, 0,
                 _tail + 1 - (_head + toIndex - _items.Length));
-            Array.Clear(_items, _head, _items.Length - index - _head);
-            Array.Clear(_items, _tail + 1 - (_head + toIndex - _items.Length), _head + toIndex - _items.Length);
+            if (hasRefs)
+            {
+                Array.Clear(_items, _head, _items.Length - index - _head);
+                Array.Clear(_items, _tail + 1 - (_head + toIndex - _items.Length), _head + toIndex - _items.Length);
+            }
+
             _tail -= (_head + toIndex - _items.Length);
             _head = (_items.Length - index);
         }
