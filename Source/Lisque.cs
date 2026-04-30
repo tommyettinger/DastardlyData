@@ -892,6 +892,13 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         }
     }
 
+    /// <summary>
+    /// Inserts an item to the lisque at the specified index.
+    /// If index is 0 or less, this behaves the same as <see cref="PushFirst"/>, and if index is greater than or
+    /// equal to <see cref="Count"/>, this behaves the same as <see cref="PushLast"/>.
+    /// </summary>
+    /// <param name="index">The zero-based index at which item should be inserted.</param>
+    /// <param name="item">The object to insert into the lisque.</param>
     public void Insert(int index, T item)
     {
         if (index <= 0)
@@ -1019,6 +1026,10 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
     /// Reduces the size of the lisque to the specified size by bulk-removing from the head.
     /// If the lisque is already smaller than the specified size, no action is taken.
     /// </summary>
+    /// <remarks>
+    /// If the item type is a reference type, this performs in O(n) time, where n is the number of items truncated.
+    /// If the item type is a value type, this performs in O(1) time.
+    /// </remarks>
     /// <param name="newSize">The size this lisque should have after this call completes, if smaller than the current size.</param>
     public void TruncateFirst(int newSize) {
         if (newSize <= 0) {
@@ -1027,16 +1038,35 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         }
         var oldSize = _size;
         if (oldSize <= newSize) return;
-        if (_head <= _tail || _head + oldSize - newSize < _items.Length) {
-            // only removing from head to head + newSize, which is contiguous
-            Array.Clear(_items, _head, oldSize - newSize);
-            _head += oldSize - newSize;
-            if (_head >= _items.Length) _head -= _items.Length;
-        } else {
-            // tail is near the start, and we are removing from head to the end and then part near start
-            Array.Clear(_items, _head, _items.Length - _head);
-            _head = _tail + 1 - newSize;
-            Array.Clear(_items, 0, _head);
+        if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
+        {
+            if (_head <= _tail || _head + oldSize - newSize < _items.Length)
+            {
+                // only removing from head to head + newSize, which is contiguous
+                Array.Clear(_items, _head, oldSize - newSize);
+                _head += oldSize - newSize;
+                if (_head >= _items.Length) _head -= _items.Length;
+            }
+            else
+            {
+                // tail is near the start, and we are removing from head to the end and then part near start
+                Array.Clear(_items, _head, _items.Length - _head);
+                _head = _tail + 1 - newSize;
+                Array.Clear(_items, 0, _head);
+            }
+        }
+        else
+        {
+            if (_head <= _tail || _head + oldSize - newSize < _items.Length)
+            {
+                _head += oldSize - newSize;
+                if (_head >= _items.Length) _head -= _items.Length;
+            }
+            else
+            {
+                _head = _tail + 1 - newSize;
+            }
+            
         }
 
         _size = newSize;
@@ -1048,6 +1078,10 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
     /// Reduces the size of the lisque to the specified size by bulk-removing from the tail.
     /// If the lisque is already smaller than the specified size, no action is taken.
     /// </summary>
+    /// <remarks>
+    /// If the item type is a reference type, this performs in O(n) time, where n is the number of items truncated.
+    /// If the item type is a value type, this performs in O(1) time.
+    /// </remarks>
     /// <param name="newSize">The size this lisque should have after this call completes, if smaller than the current size.</param>
     public void TruncateLast(int newSize)
     {
@@ -1057,20 +1091,44 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         }
         var oldSize = _size;
         if (oldSize <= newSize) return;
-        if (_head <= _tail) {
-            // only removing from tail, near the end, toward head, near the start
-            Array.Clear(_items, _head + newSize, _tail + 1 - _head - newSize);
-            _tail -= oldSize - newSize;
-        } else if (_head + newSize < _items.Length) {
-            // tail is near the start, but we have to remove elements through the start and into the back
-            Array.Clear(_items, 0, _tail + 1);
-            _tail = _head + newSize;
-            Array.Clear(_items, _tail, _items.Length - _tail);
-        } else {
-            // tail is near the start, but we only have to remove some elements between tail and the start
-            var newTail = _tail - (oldSize - newSize);
-            Array.Clear(_items, newTail + 1, _tail - newTail);
-            _tail = newTail;
+        if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
+        {
+            if (_head <= _tail)
+            {
+                // only removing from tail, near the end, toward head, near the start
+                Array.Clear(_items, _head + newSize, _tail + 1 - _head - newSize);
+                _tail -= oldSize - newSize;
+            }
+            else if (_head + newSize < _items.Length)
+            {
+                // tail is near the start, but we have to remove elements through the start and into the back
+                Array.Clear(_items, 0, _tail + 1);
+                _tail = _head + newSize;
+                Array.Clear(_items, _tail, _items.Length - _tail);
+            }
+            else
+            {
+                // tail is near the start, but we only have to remove some elements between tail and the start
+                var newTail = _tail - (oldSize - newSize);
+                Array.Clear(_items, newTail + 1, _tail - newTail);
+                _tail = newTail;
+            }
+        }
+        else
+        {
+            if (_head <= _tail)
+            {
+                _tail -= oldSize - newSize;
+            }
+            else if (_head + newSize < _items.Length)
+            {
+                _tail = _head + newSize;
+            }
+            else
+            {
+                _tail -= oldSize - newSize;
+            }
+            
         }
 
         _size = newSize;
