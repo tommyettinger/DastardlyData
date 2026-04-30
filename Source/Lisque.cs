@@ -287,6 +287,15 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         _version++;
     }
 
+    /// <summary>
+    /// Returns true if this lisque contains the given item, or false otherwise.
+    /// </summary>
+    /// <remarks>
+    /// This runs in O(n) time. It uses <see cref="Array.IndexOf(Array, object?, int, int)"/> to find the item,
+    /// if present.
+    /// </remarks>
+    /// <param name="item">The item to search for.</param>
+    /// <returns>true if the given item is present in this lisque, or false otherwise.</returns>
     public bool Contains(T item)
     {
         if (_size == 0) return false;
@@ -299,6 +308,11 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
                Array.IndexOf(_items, item, _head, _items.Length - _head) >= 0;
     }
 
+    /// <summary>
+    /// Returns true if any item exists in this lisque that matches the given Predicate, or false if none match it.
+    /// </summary>
+    /// <param name="match">The Predicate of T delegate that defines the conditions of the element to search for.</param>
+    /// <returns>true if any item returns true for the given Predicate, or false if none return true for it.</returns>
     public bool Exists(Predicate<T> match)
         => FindIndex(match) != -1;
     
@@ -323,13 +337,38 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         }
         return default;
     }
-    
+
+    /// <summary>
+    /// Searches for an element that matches the conditions defined by the specified predicate, and returns the
+    /// zero-based index of the first occurrence within the entire lisque, or -1 if no items match the predicate.
+    /// </summary>
+    /// <param name="match">The Predicate of T delegate that defines the conditions of the element to search for.</param>
+    /// <returns>The zero-based index of the first matching item, or -1 if no item matches.</returns>
     public int FindIndex(Predicate<T> match)
         => FindIndex(0, _size, match);
 
+    /// <summary>
+    /// Searches for an element that matches the conditions defined by the specified predicate at or after the given
+    /// startIndex. Returns the zero-based index of the first occurrence within the entire lisque, or -1 if no items
+    /// match the predicate in the specified range.
+    /// </summary>
+    /// <param name="startIndex">The zero-based first index to start the search from.</param>
+    /// <param name="match">The Predicate of T delegate that defines the conditions of the element to search for.</param>
+    /// <returns>The zero-based index of the first matching item, or -1 if no item matches.</returns>
     public int FindIndex(int startIndex, Predicate<T> match)
         => FindIndex(startIndex, _size - startIndex, match);
 
+    /// <summary>
+    /// Searches for an element that matches the conditions defined by the specified predicate at or after the given
+    /// startIndex, searching up to the provided count of items. Returns the zero-based index of the first occurrence
+    /// within the entire lisque, or -1 if no items match the predicate in the specified range.
+    /// </summary>
+    /// <param name="startIndex">The zero-based first index to start the search from.</param>
+    /// <param name="count">How many items to search through, at most.</param>
+    /// <param name="match">The Predicate of T delegate that defines the conditions of the element to search for.</param>
+    /// <returns>The zero-based index of the first matching item, or -1 if no item matches.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">If startIndex is larger than the Count of this lisque, if the
+    /// count parameter is negative, or there are not enough items remaining to satisfy the count.</exception>
     public int FindIndex(int startIndex, int count, Predicate<T> match)
     {
         if ((uint)startIndex > (uint)_size)
@@ -380,12 +419,37 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         return default;
     }
 
+    /// <summary>
+    /// Searches for an element that matches the conditions defined by the specified predicate, and returns the
+    /// zero-based index of the last occurrence within the entire lisque, or -1 if no items match the predicate.
+    /// </summary>
+    /// <param name="match">The Predicate of T delegate that defines the conditions of the element to search for.</param>
+    /// <returns>The zero-based index of the last matching item, or -1 if no item matches.</returns>
     public int FindLastIndex(Predicate<T> match)
         => FindLastIndex(_size - 1, _size, match);
-
+    
+    /// <summary>
+    /// Searches for an element that matches the conditions defined by the specified predicate at or before the given
+    /// startIndex. Returns the zero-based index of the last occurrence within the entire lisque, or -1 if no items
+    /// match the predicate in the specified range.
+    /// </summary>
+    /// <param name="startIndex">The zero-based last index to start the end-to-start search from.</param>
+    /// <param name="match">The Predicate of T delegate that defines the conditions of the element to search for.</param>
+    /// <returns>The zero-based index of the last matching item, or -1 if no item matches.</returns>
     public int FindLastIndex(int startIndex, Predicate<T> match)
         => FindLastIndex(startIndex, startIndex + 1, match);
 
+    /// <summary>
+    /// Searches for an element that matches the conditions defined by the specified predicate at or before the given
+    /// startIndex, searching up to the provided count of items. Returns the zero-based index of the last occurrence
+    /// within the entire lisque, or -1 if no items match the predicate in the specified range.
+    /// </summary>
+    /// <param name="startIndex">The zero-based last index to start the end-to-start search from.</param>
+    /// <param name="count">How many items to search through, at most.</param>
+    /// <param name="match">The Predicate of T delegate that defines the conditions of the element to search for.</param>
+    /// <returns>The zero-based index of the last matching item, or -1 if no item matches.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">If startIndex is larger than the Count of this lisque, if the
+    /// count parameter is negative, or there are not enough items remaining to satisfy the count.</exception>
     public int FindLastIndex(int startIndex, int count, Predicate<T> match)
     {
         if ((uint)startIndex >= (uint)_size)
