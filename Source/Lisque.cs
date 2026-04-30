@@ -459,7 +459,7 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
             }
         }
     }
-    
+
     /// <summary>
     /// Copies the entire lisque to a compatible one-dimensional array, starting
     /// at the beginning of the target array.
@@ -467,6 +467,24 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
     /// <param name="array">The one-dimensional Array that is the destination of the elements copied from
     /// this lisque. The Array must have zero-based indexing.</param>
     public void CopyTo(T[] array) => CopyTo(array, 0);
+
+    /// <summary>
+    /// Copies the elements of the lisque to a new array.
+    /// </summary>
+    /// <returns>An array containing copies of the elements of the lisque.</returns>
+    public T[] ToArray()
+    {
+        var array = new T[size];
+        if (head <= tail)
+            Array.Copy(items, head, array, 0, size);
+        else
+        {
+            Array.Copy(items, head, array, 0, items.Length - head);
+            Array.Copy(items, 0, array, 0 + items.Length - head, tail + 1);
+        }
+
+        return array;
+    }
 
     public bool Remove(T item)
     {
