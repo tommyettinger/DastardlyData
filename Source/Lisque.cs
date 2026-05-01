@@ -1488,8 +1488,18 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         (_items[indexA], _items[indexB]) = (_items[indexB], _items[indexA]);
     }
 
+    /// <summary>
+    /// Reverses the order of the entire lisque; the start becomes the end and vice versa.
+    /// </summary>
     public void Reverse() => Reverse(0, _size);
 
+    /// <summary>
+    /// Reverses the order of the specified range of the lisque.
+    /// </summary>
+    /// <param name="start">The zero-based first index to reverse.</param>
+    /// <param name="length">How many items to reverse.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Start or length is negative.</exception>
+    /// <exception cref="ArgumentException">There are not enough elements to satisfy the requested lenth after start.</exception>
     public void Reverse(int start, int length)
     {
         if(start < 0) throw new ArgumentOutOfRangeException(nameof(start));
@@ -1528,6 +1538,7 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
     /// <summary>
     /// Sorts the entire lisque using the given IComparer of T.
     /// </summary>
+    /// <param name="comparer">The IComparer{T} implementation to use when comparing elements, or null to use the default comparer.</param>
     public void Sort(IComparer<T>? comparer)
     {
         if(_size <= 1) return;
@@ -1555,6 +1566,9 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
     /// This performs an O(n) operation, <see cref="TrimExcess"/>, and then can perform a sort simply using
     /// <see cref="Array.Sort(Array, int, int, IComparer?"/>, which takes O(n log(n)) time in the expected case.
     /// </remarks>
+    /// <param name="index">The first zero-based index to sort.</param>
+    /// <param name="count">How many items to sort.</param>
+    /// <param name="comparer">The IComparer{T} implementation to use when comparing elements, or null to use the default comparer.</param>
     public void Sort(int index, int count, IComparer<T>? comparer)
     {
         if(_size <= 1) return;
@@ -1569,6 +1583,7 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
     /// This is the same as the <see cref="Sort(IComparer{T})"/> method except that it creates an IComparer
     /// from the given Comparison if it needs to sort at all.
     /// </remarks>
+    /// <param name="comparer">The Comparison{T} to use when comparing elements.</param>
     public void Sort(Comparison<T> comparer)
     {
         if(_size <= 1) return;
@@ -1589,6 +1604,19 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         }
     }
 
+    /// <summary>
+    /// Searches a range of elements in the sorted lisque for an element using the specified comparer and returns
+    /// the zero-based index of the element, if found. Returns a negative number if item was not found.
+    /// </summary>
+    /// <param name="index">The zero-based starting index of the range to search.</param>
+    /// <param name="count">The length of the range to search.</param>
+    /// <param name="item">The item to locate.</param>
+    /// <param name="comparer">The IComparer{T} implementation to use when comparing elements, or null to use the default comparer.</param>
+    /// <returns>The zero-based index of item in the sorted lisque, if item is found; otherwise, a negative number that
+    /// is the bitwise complement of the index of the next element that is larger than item or, if there is no larger
+    /// element, the bitwise complement of Count.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">index or count is negative.</exception>
+    /// <exception cref="ArgumentException">There are not enough elements to satisfy the requested lenth after start.</exception>
     public int BinarySearch(int index, int count, T item, IComparer<T>? comparer)
     {
         
@@ -1621,9 +1649,26 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         }
     }
     
+    /// <summary>
+    /// Searches the entire sorted lisque for an element using the default comparer and returns
+    /// the zero-based index of the element, if found. Returns a negative number if item was not found.
+    /// </summary>
+    /// <param name="item">The item to locate.</param>
+    /// <returns>The zero-based index of item in the sorted lisque, if item is found; otherwise, a negative number that
+    /// is the bitwise complement of the index of the next element that is larger than item or, if there is no larger
+    /// element, the bitwise complement of Count.</returns>
     public int BinarySearch(T item)
         => BinarySearch(0, Count, item, null);
 
+    /// <summary>
+    /// Searches the entire sorted lisque for an element using the specified comparer and returns
+    /// the zero-based index of the element, if found. Returns a negative number if item was not found.
+    /// </summary>
+    /// <param name="item">The item to locate.</param>
+    /// <param name="comparer">The IComparer{T} implementation to use when comparing elements, or null to use the default comparer.</param>
+    /// <returns>The zero-based index of item in the sorted lisque, if item is found; otherwise, a negative number that
+    /// is the bitwise complement of the index of the next element that is larger than item or, if there is no larger
+    /// element, the bitwise complement of Count.</returns>
     public int BinarySearch(T item, IComparer<T>? comparer)
         => BinarySearch(0, Count, item, comparer);
     
@@ -2019,6 +2064,9 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
         _tail = _items.Length - 1;
     }
     
+    /// <summary>
+    /// The number of elements that the lisque can contain before resizing is required.
+    /// </summary>
     public int Capacity
     {
         get => _items.Length;
