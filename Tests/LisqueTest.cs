@@ -180,4 +180,15 @@ public class Tests {
             Assert.That(lisques[i], Is.EquivalentTo(lists[i]));
         }
     }
+
+    [Test]
+    public void TestRemoveAll()
+    {
+        var lisques = GenerateAll();
+        for (var i = 0; i < 4; i++)
+        {
+            lisques[i].RemoveAll(x => x.EndsWith('a'));
+            Assert.That(lisques[i], Has.Count.EqualTo(1));
+        }
+    }
 }
