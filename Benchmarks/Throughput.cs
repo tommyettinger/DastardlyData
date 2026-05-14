@@ -13,22 +13,28 @@ namespace Benchmarks {
     /// 12th Gen Intel Core i7-12800H, 1 CPU, 20 logical and 14 physical cores
     /// .NET SDK 10.0.103
     ///   [Host]     : .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
-    ///   Job-BCRUGC : .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
+    ///   Job-QBACWG : .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
     /// 
     /// RunStrategy=Throughput  UnrollFactor=256
     /// 
     /// | Method                | Mean         | Error      | StdDev     |
     /// |---------------------- |-------------:|-----------:|-----------:|
-    /// | LisqueAdd             |     3.197 ns |  0.0643 ns |  0.0601 ns |
-    /// | LisqueInsertStart     |     3.219 ns |  0.0722 ns |  0.0675 ns |
-    /// | ListAdd               |     2.282 ns |  0.0447 ns |  0.0418 ns |
-    /// | ListInsertStart       | 6,451.106 ns | 21.3884 ns | 18.9602 ns |
-    /// | LinkedListAdd         |    63.922 ns |  1.3215 ns |  3.8966 ns |
-    /// | LinkedListInsertStart |    67.163 ns |  1.3561 ns |  3.0884 ns |
+    /// | LisqueAdd             |     3.175 ns |  0.0546 ns |  0.0511 ns |
+    /// | LisqueInsertStart     |     3.185 ns |  0.0595 ns |  0.0556 ns |
+    /// | LisqueInsertRandom    | 3,271.960 ns | 15.8430 ns | 14.0444 ns |
+    /// | ListAdd               |     2.138 ns |  0.0343 ns |  0.0304 ns |
+    /// | ListInsertStart       | 6,465.797 ns | 28.4104 ns | 26.5751 ns |
+    /// | ListInsertRandom      | 3,235.046 ns | 11.6599 ns | 10.9067 ns |
+    /// | LinkedListAdd         |    67.200 ns |  1.3713 ns |  2.7700 ns |
+    /// | LinkedListInsertStart |    65.960 ns |  1.3467 ns |  3.0397 ns |
     /// 
     /// // * Hints *
     /// Outliers
-    ///   Throughput.ListInsertStart: RunStrategy=Throughput, UnrollFactor=256 -> 1 outlier  was  removed, 2 outliers were detected (6.41 us, 7.06 us)
+    ///   Throughput.LisqueInsertRandom: RunStrategy=Throughput, UnrollFactor=256    -> 1 outlier  was  removed, 2 outliers were detected (3.24 us, 3.40 us)
+    ///   Throughput.ListAdd: RunStrategy=Throughput, UnrollFactor=256               -> 1 outlier  was  removed (3.48 ns)
+    ///   Throughput.ListInsertRandom: RunStrategy=Throughput, UnrollFactor=256      -> 1 outlier  was  detected (3.22 us)
+    ///   Throughput.LinkedListAdd: RunStrategy=Throughput, UnrollFactor=256         -> 1 outlier  was  detected (61.37 ns)
+    ///   Throughput.LinkedListInsertStart: RunStrategy=Throughput, UnrollFactor=256 -> 1 outlier  was  removed, 3 outliers were detected (60.35 ns, 60.59 ns, 76.48 ns)
     /// 
     /// // * Legends *
     ///   Mean   : Arithmetic mean of all measurements
@@ -76,7 +82,7 @@ namespace Benchmarks {
         [IterationSetup(Target = nameof(LisqueInsertRandom))]
         public void LisqueInsertRandomSetup()
         {
-            _lisque = new Lisque<int>(16) { 2 };
+            _lisque = new Lisque<int>(16) { 2, 3, 4 };
             _random = new Random();
         }
         [IterationCleanup(Target = nameof(LisqueInsertRandom))]
@@ -87,7 +93,7 @@ namespace Benchmarks {
         }
         [Benchmark]
         public void LisqueInsertRandom() {
-            _lisque!.Insert(_random!.Next(_lisque.Count), 1);
+            _lisque!.Insert(_random!.Next(_lisque!.Count), 1);
         }
 
         private List<int>? _list;
@@ -125,7 +131,7 @@ namespace Benchmarks {
         [IterationSetup(Target = nameof(ListInsertRandom))]
         public void ListInsertRandomSetup()
         {
-            _list = new List<int>(16) { 2 };
+            _list = new List<int>(16) { 2, 3, 4};
             _random = new Random();
         }
         [IterationCleanup(Target = nameof(ListInsertRandom))]
@@ -136,7 +142,7 @@ namespace Benchmarks {
         }
         [Benchmark]
         public void ListInsertRandom() {
-            _list!.Insert(_random!.Next(_list.Count), 1);
+            _list!.Insert(_random!.Next(_list!.Count), 1);
         }
 
         private LinkedList<int>? _linkedList;
