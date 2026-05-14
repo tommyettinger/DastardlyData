@@ -19,7 +19,8 @@ namespace Benchmarks {
         {
             _lisque!.Clear();
         }
-        [Benchmark]
+        [Benchmark(OperationsPerInvoke = 1000)] 
+        [InvocationCount(10000)]
         public void LisqueAdd() {
             _lisque!.Add(1);
         }
@@ -34,7 +35,8 @@ namespace Benchmarks {
         {
             _lisque!.Clear();
         }
-        [Benchmark]
+        [Benchmark(OperationsPerInvoke = 1000)]
+        [InvocationCount(10000)]
         public void LisqueInsertStart() {
             _lisque!.Insert(0, 1);
         }
@@ -51,7 +53,8 @@ namespace Benchmarks {
         {
             _list!.Clear();
         }
-        [Benchmark]
+        [Benchmark(OperationsPerInvoke = 1000)]
+        [InvocationCount(10000)]
         public void ListAdd() {
             _list!.Add(1);
         }
@@ -66,7 +69,8 @@ namespace Benchmarks {
         {
             _list!.Clear();
         }
-        [Benchmark]
+        [Benchmark(OperationsPerInvoke = 1000)]
+        [InvocationCount(10000)]
         public void ListInsertStart() {
             _list!.Insert(0, 1);
         }
@@ -83,7 +87,8 @@ namespace Benchmarks {
         {
             _linkedList!.Clear();
         }
-        [Benchmark]
+        [Benchmark(OperationsPerInvoke = 1000)]
+        [InvocationCount(10000)]
         public void LinkedListAdd() {
             _linkedList!.AddLast(1);
         }
@@ -98,7 +103,8 @@ namespace Benchmarks {
         {
             _linkedList!.Clear();
         }
-        [Benchmark]
+        [Benchmark(OperationsPerInvoke = 1000)]
+        [InvocationCount(10000)]
         public void LinkedListInsertStart() {
             _linkedList!.AddFirst(1);
         }
