@@ -40,6 +40,7 @@ namespace Benchmarks {
     public class Throughput
     {
 
+        private Random? _random;
         private Lisque<int>? _lisque;
 
         [IterationSetup(Target = nameof(LisqueAdd))]
@@ -72,6 +73,23 @@ namespace Benchmarks {
             _lisque!.Insert(0, 1);
         }
 
+        [IterationSetup(Target = nameof(LisqueInsertRandom))]
+        public void LisqueInsertRandomSetup()
+        {
+            _lisque = new Lisque<int>(16) { 2 };
+            _random = new Random();
+        }
+        [IterationCleanup(Target = nameof(LisqueInsertRandom))]
+        public void LisqueInsertRandomCleanup()
+        {
+            _lisque!.Clear();
+            _random = null;
+        }
+        [Benchmark]
+        public void LisqueInsertRandom() {
+            _lisque!.Insert(_random!.Next(_lisque.Count), 1);
+        }
+
         private List<int>? _list;
 
         [IterationSetup(Target = nameof(ListAdd))]
@@ -102,6 +120,23 @@ namespace Benchmarks {
         [Benchmark]
         public void ListInsertStart() {
             _list!.Insert(0, 1);
+        }
+
+        [IterationSetup(Target = nameof(ListInsertRandom))]
+        public void ListInsertRandomSetup()
+        {
+            _list = new List<int>(16) { 2 };
+            _random = new Random();
+        }
+        [IterationCleanup(Target = nameof(ListInsertRandom))]
+        public void ListInsertRandomCleanup()
+        {
+            _list!.Clear();
+            _random = null;
+        }
+        [Benchmark]
+        public void ListInsertRandom() {
+            _list!.Insert(_random!.Next(_list.Count), 1);
         }
 
         private LinkedList<int>? _linkedList;
