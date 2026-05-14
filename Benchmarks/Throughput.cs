@@ -1,12 +1,50 @@
 ﻿
+using Dastardly.Data;
+
 namespace Benchmarks {
 
     /// <summary> Throughput is a measurement of how much data we can push through the system at once. </summary>
-    public class Throughput {
+    public class Throughput
+    {
+
+        private Lisque<int> _lisque = null!;
+
+        [GlobalSetup(Target = nameof(LisqueAdd))]
+        public void LisqueAddSetup() => _lisque = new(16);
+
         
         [Benchmark]
-        public void YPerSecond() {
+        public void LisqueAdd() {
+            _lisque.Add(1);
+        }
 
+        [GlobalSetup(Target = nameof(LisqueInsertStart))]
+        public void LisqueInsertStartSetup() => _list = new(16);
+
+        
+        [Benchmark]
+        public void LisqueInsertStart() {
+            _list.Insert(0, 1);
+        }
+
+        private List<int> _list = null!;
+
+        [GlobalSetup(Target = nameof(ListAdd))]
+        public void ListAddSetup() => _list = new(16);
+
+        
+        [Benchmark]
+        public void ListAdd() {
+            _list.Add(1);
+        }
+
+        [GlobalSetup(Target = nameof(ListInsertStart))]
+        public void ListInsertStartSetup() => _list = new(16);
+
+        
+        [Benchmark]
+        public void ListInsertStart() {
+            _list.Insert(0, 1);
         }
     }
 }
