@@ -105,12 +105,24 @@ public class IndexedSet<T> : ISet<T>, ILisque<T> where T : notnull
         _lisque.AddRange(s);
     }
 
+    public int RemoveWhere(Predicate<T> match)
+    {
+        var removed = _set.RemoveWhere(match);
+        _lisque.RemoveAll(t => !_set.Contains(t));
+        return removed;
+    }
+
+    public void EnsureCapacity(int capacity)
+    {
+        _set.EnsureCapacity(capacity);
+        _lisque.EnsureCapacity(capacity);
+    }
+    
     bool ISet<T>.Add(T item)
     {
         if (!_set.Add(item)) return false;
         _lisque.Add(item);
         return true;
-
     }
 
     public void Clear()
@@ -189,7 +201,21 @@ public class IndexedSet<T> : ISet<T>, ILisque<T> where T : notnull
         var popped = _lisque.PopAt(index);
         _set.Remove(popped);
         return popped;
+    }
 
+    public void Reverse()
+    {
+        _lisque.Reverse();
+    }
+    
+    public void Sort()
+    {
+        _lisque.Sort();
+    }
+    
+    public void Sort(IComparer<T> comparer)
+    {
+        _lisque.Sort(comparer);
     }
 
     public T First
@@ -214,6 +240,5 @@ public class IndexedSet<T> : ISet<T>, ILisque<T> where T : notnull
                 _lisque.Last = value;
             else _lisque.PopLast();
         }
-
     }
 }
