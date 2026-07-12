@@ -6,7 +6,27 @@ public class IndexedSet<T> : ISet<T>, ILisque<T> where T : notnull
 {
     private HashSet<T> _set;
     private Lisque<T> _lisque;
+
+    public IndexedSet(IEqualityComparer<T>? comparer = null)
+    {
+        _set = new HashSet<T>(comparer);
+        _lisque = new Lisque<T>();
+    }
     
+    public IndexedSet(IEnumerable<T> collection, IEqualityComparer<T>? comparer = null) : this(comparer)
+    {
+        foreach (var t in collection)
+        {
+            Add(t);
+        }
+    }
+
+    public IndexedSet(int capacity, IEqualityComparer<T>? comparer = null)
+    {
+        _set = new HashSet<T>(capacity, comparer);
+        _lisque = new Lisque<T>(capacity);
+    }
+
     public bool IsReadOnly => false;
 
     public IEnumerator<T> GetEnumerator()
