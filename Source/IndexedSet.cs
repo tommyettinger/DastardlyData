@@ -25,6 +25,74 @@ public class IndexedSet<T> : ISet<T>, ILisque<T> where T : notnull
             _lisque.Add(item);
     }
 
+    public void ExceptWith(IEnumerable<T> other)
+    {
+        _set.ExceptWith(other);
+        _lisque.RemoveAll(t => !_set.Contains(t));
+    }
+
+    public void IntersectWith(IEnumerable<T> other)
+    {
+        _set.IntersectWith(other);
+        _lisque.RemoveAll(t => !_set.Contains(t));
+        
+    }
+
+    public bool IsProperSubsetOf(IEnumerable<T> other)
+    {
+        return _set.IsProperSubsetOf(other);
+    }
+
+    public bool IsProperSupersetOf(IEnumerable<T> other)
+    {
+        return _set.IsProperSupersetOf(other);
+    }
+
+    public bool IsSubsetOf(IEnumerable<T> other)
+    {
+        return _set.IsSubsetOf(other);
+    }
+
+    public bool IsSupersetOf(IEnumerable<T> other)
+    {
+        return _set.IsSupersetOf(other);
+    }
+
+    public bool Overlaps(IEnumerable<T> other)
+    {
+        return _set.Overlaps(other);
+    }
+
+    public bool SetEquals(IEnumerable<T> other)
+    {
+        return _set.SetEquals(other);
+    }
+
+    public void SymmetricExceptWith(IEnumerable<T> other)
+    {
+        var s = other.ToHashSet();
+        _set.SymmetricExceptWith(s);
+        s.IntersectWith(_set);
+        _lisque.AddRange(s);
+        _lisque.RemoveAll(t => !_set.Contains(t));
+    }
+
+    public void UnionWith(IEnumerable<T> other)
+    {
+        var s = other.ToHashSet();
+        s.ExceptWith(_set);
+        _set.UnionWith(s);
+        _lisque.AddRange(s);
+    }
+
+    bool ISet<T>.Add(T item)
+    {
+        if (!_set.Add(item)) return false;
+        _lisque.Add(item);
+        return true;
+
+    }
+
     public void Clear()
     {
         _set.Clear();
