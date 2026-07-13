@@ -241,4 +241,20 @@ public class IndexedSet<T> : ISet<T>, ILisque<T> where T : notnull
             else _lisque.PopLast();
         }
     }
+
+    public void Swap(int indexA, int indexB)
+    {
+        _lisque.Swap(indexA, indexB);
+    }
+
+    public IndexedSet<T> Slice(int start, int length)
+    {
+        return new IndexedSet<T>(_lisque.Slice(start, length), _set.Comparer);
+    }
+
+    public void TrimExcess()
+    {
+        _set.TrimExcess();
+        _lisque.TrimExcess();
+    }
 }
