@@ -7,12 +7,22 @@ public class IndexedSet<T> : ISet<T>, ILisque<T> where T : notnull
     private readonly HashSet<T> _set;
     private readonly Lisque<T> _lisque;
 
+    /// <summary>
+    /// Creates a new empty IndexedSet that may use a specified IEqualityComparer.
+    /// </summary>
+    /// <param name="comparer">May be null to use the default ordering of T; otherwise, used to compare T items.</param>
     public IndexedSet(IEqualityComparer<T>? comparer = null)
     {
         _set = new HashSet<T>(comparer);
         _lisque = new Lisque<T>();
     }
     
+    /// <summary>
+    /// Creates a new IndexedSet that contains the unique items from <c>collection</c>, and may use a specified
+    /// IEqualityComparer.
+    /// </summary>
+    /// <param name="collection">Any IEnumerable of T; often an <see cref="ICollection{T}"/>.</param>
+    /// <param name="comparer">May be null to use the default ordering of T; otherwise, used to compare T items.</param>
     public IndexedSet(IEnumerable<T> collection, IEqualityComparer<T>? comparer = null) : this(comparer)
     {
         foreach (var t in collection)
@@ -21,17 +31,31 @@ public class IndexedSet<T> : ISet<T>, ILisque<T> where T : notnull
         }
     }
 
+    /// <summary>
+    /// Creates a new IndexedSet that can hold at least <c>capacity</c> items and may use a specified IEqualityComparer.
+    /// </summary>
+    /// <param name="capacity">The minimum number of items this should be able to hold without resizing.</param>
+    /// <param name="comparer">May be null to use the default ordering of T; otherwise, used to compare T items.</param>
     public IndexedSet(int capacity, IEqualityComparer<T>? comparer = null)
     {
         _set = new HashSet<T>(capacity, comparer);
         _lisque = new Lisque<T>(capacity);
     }
 
+    /// <summary>
+    /// Shallow-copies an IndexedSet into a new IndexedSet; the contents, order, and comparer will be the same.
+    /// </summary>
+    /// <param name="other">An IndexedSet to shallow-copy; the contents, order, and comparer will be the same.</param>
     public IndexedSet(IndexedSet<T> other)
     {
         _set = new HashSet<T>(other._set, other.Comparer);
         _lisque = new Lisque<T>(other._lisque);
     }
+
+    /// <summary>
+    /// Shallow-copies a HashSet into a new IndexedSet; the order is undefined but will not have duplicates.
+    /// </summary>
+    /// <param name="other">A HashSet to shallow-copy; its <see cref="HashSet{T}.Comparer"/> will be used here.</param>
     public IndexedSet(HashSet<T> other)
     {
         _set = new HashSet<T>(other, other.Comparer);
