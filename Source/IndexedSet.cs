@@ -32,6 +32,11 @@ public class IndexedSet<T> : ISet<T>, ILisque<T> where T : notnull
         _set = new HashSet<T>(other._set, other._set.Comparer);
         _lisque = new Lisque<T>(other._lisque);
     }
+    public IndexedSet(HashSet<T> other)
+    {
+        _set = new HashSet<T>(other, other.Comparer);
+        _lisque = new Lisque<T>(other);
+    }
     
     public bool IsReadOnly => false;
 
