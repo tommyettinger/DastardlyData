@@ -98,4 +98,26 @@ public class IndexedSetTest
         Assert.That(indexedSet.IndexOf("gamma"), Is.EqualTo(1));
     }
 
+    [Test]
+    public void TestEnumerator()
+    {
+        IndexedSet<string> indexedSet = new(4);
+        indexedSet.PushLast("beta");
+        indexedSet.PushFirst("alpha");
+        indexedSet.PushLast("gamma");
+        indexedSet.PushLast("delta");
+        indexedSet.PushLast("epsilon");
+        indexedSet.PushLast("eta");
+        indexedSet.PushFirst("OOPS");
+        indexedSet.PopFirst();
+        indexedSet.Insert(5, "zeta");
+        indexedSet.Insert(5, "BEFORE ZETA");
+        indexedSet.RemoveAt(5);
+        Assert.That(indexedSet, Is.EquivalentTo(["alpha", "beta", "gamma",  "delta", "epsilon", "zeta", "eta"]));
+        foreach (var letter in indexedSet)
+        {
+            Console.WriteLine(letter);
+        }
+    }
+
 }
