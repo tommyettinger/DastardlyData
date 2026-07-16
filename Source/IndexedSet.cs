@@ -4,8 +4,8 @@ namespace Dastardly.Data;
 
 public class IndexedSet<T> : ISet<T>, ILisque<T> where T : notnull
 {
-    private HashSet<T> _set;
-    private Lisque<T> _lisque;
+    private readonly HashSet<T> _set;
+    private readonly Lisque<T> _lisque;
 
     public IndexedSet(IEqualityComparer<T>? comparer = null)
     {
@@ -27,6 +27,12 @@ public class IndexedSet<T> : ISet<T>, ILisque<T> where T : notnull
         _lisque = new Lisque<T>(capacity);
     }
 
+    public IndexedSet(IndexedSet<T> other)
+    {
+        _set = new HashSet<T>(other._set, other._set.Comparer);
+        _lisque = new Lisque<T>(other._lisque);
+    }
+    
     public bool IsReadOnly => false;
 
     public IEnumerator<T> GetEnumerator()
