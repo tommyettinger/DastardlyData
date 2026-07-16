@@ -2,7 +2,7 @@ using Dastardly.Data;
 
 namespace Tests;
 
-public class Tests {
+public class LisqueTest {
     private static Lisque<string> GenerateFull() 
     {
         Lisque<string> lisque = new(8);
