@@ -294,4 +294,34 @@ public class IndexedSet<T> : ISet<T>, ILisque<T> where T : notnull
         _set.TrimExcess();
         _lisque.TrimExcess();
     }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is null) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return SetEquals((IndexedSet<T>)obj);
+    }
+
+    // ReSharper disable method NonReadonlyMemberInGetHashCode
+    public override int GetHashCode()
+    {
+        var hash = _lisque.Count + 1;
+        foreach (var value in _lisque)
+        {
+            hash += value.GetHashCode();
+        }
+        return hash;
+    }
+
+    public static bool operator ==(IndexedSet<T>? left, IndexedSet<T>? right)
+    {
+        return Equals(left, right);
+    }
+
+    public static bool operator !=(IndexedSet<T>? left, IndexedSet<T>? right)
+    {
+        return !Equals(left, right);
+    }
+
 }
