@@ -96,6 +96,7 @@ public class LisqueTest {
         Assert.That(lisque.IndexOf("beta"), Is.EqualTo(-1));
         Assert.That(lisque.IndexOf("gamma"), Is.EqualTo(1));
     }
+
     [Test]
     public void TestEnumerator()
     {

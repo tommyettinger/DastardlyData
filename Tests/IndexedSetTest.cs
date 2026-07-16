@@ -76,4 +76,26 @@ public class IndexedSetTest
         Assert.That(indexedSet[2], Is.EqualTo("gamma"));
     }
 
+    [Test]
+    public void TestHeadWraps()
+    {
+        IndexedSet<string> indexedSet = new(4);
+        indexedSet.PushFirst("gamma");
+        indexedSet.PushFirst("beta");
+        indexedSet.PushFirst("alpha");
+        Assert.That(indexedSet[0], Is.EqualTo("alpha"));
+        Assert.That(indexedSet[1], Is.EqualTo("beta"));
+        Assert.That(indexedSet[2], Is.EqualTo("gamma"));
+        Assert.That(indexedSet.IndexOf("alpha"), Is.EqualTo(0));
+        Assert.That(indexedSet.IndexOf("beta"), Is.EqualTo(1));
+        Assert.That(indexedSet.IndexOf("gamma"), Is.EqualTo(2));
+        Assert.That(indexedSet.IndexOf("not here"), Is.EqualTo(-1));
+
+        var received = indexedSet.PopAt(1);
+        Assert.That(received, Is.EqualTo("beta"));
+        Assert.That(indexedSet[1], Is.EqualTo("gamma"));
+        Assert.That(indexedSet.IndexOf("beta"), Is.EqualTo(-1));
+        Assert.That(indexedSet.IndexOf("gamma"), Is.EqualTo(1));
+    }
+
 }
