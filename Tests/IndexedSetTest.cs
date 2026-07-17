@@ -140,4 +140,28 @@ public class IndexedSetTest
         Assert.That(indexedSet.LastIndexOf("beta2", 20, 20), Is.EqualTo(15));
     }
 
+    [Test]
+    public void TestIndexOfWrapping()
+    {
+        IndexedSet<string> indexedSet = 
+        [                      "gamma",   "delta",  "epsilon",  "zeta",  "eta",
+            "alpha1", "beta1", "gamma1",  "delta1", "epsilon1", "zeta1", "eta1",
+            "alpha2", "beta2", "gamma2",  "delta2", "epsilon2", "zeta2", "eta2"];
+        // makes head wrap around.
+        indexedSet.PushFirst("beta");
+        indexedSet.PushFirst("alpha");
+        Assert.That(indexedSet.IndexOf("alpha"), Is.EqualTo(0));
+        Assert.That(indexedSet.IndexOf("beta"), Is.EqualTo(1));
+        Assert.That(indexedSet.IndexOf("beta", 2), Is.EqualTo(-1));
+        Assert.That(indexedSet.IndexOf("beta", 2, 4), Is.EqualTo(-1));
+        Assert.That(indexedSet.IndexOf("beta2", 15, 4), Is.EqualTo(15));
+        Assert.That(indexedSet.LastIndexOf("alpha"), Is.EqualTo(0));
+        Assert.That(indexedSet.LastIndexOf("beta1"), Is.EqualTo(8));
+        Assert.That(indexedSet.LastIndexOf("beta", 7), Is.EqualTo(1));
+        Assert.That(indexedSet.LastIndexOf("beta", 20, 4), Is.EqualTo(-1));
+        Assert.That(indexedSet.LastIndexOf("beta2", 20, 20), Is.EqualTo(15));
+        Assert.That(indexedSet.LastIndexOf("beta", 2, 2), Is.EqualTo(1));
+        Assert.That(indexedSet.LastIndexOf("beta1", 8, 8), Is.EqualTo(8));
+    }
+
 }
