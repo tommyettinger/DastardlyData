@@ -21,11 +21,13 @@ public class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ILisqu
 
     public void Add(KeyValuePair<TKey, TValue> item)
     {
-        _lisque.Add(item);
+        if(_dict.TryAdd(item.Key, item.Value))
+            _lisque.Add(item);
     }
 
     public void Clear()
     {
+        _dict.Clear();
         _lisque.Clear();
     }
 
@@ -41,7 +43,7 @@ public class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ILisqu
 
     public bool Remove(KeyValuePair<TKey, TValue> item)
     {
-        return _lisque.Remove(item);
+        return _dict.Remove(item.Key) && _lisque.Remove(item);
     }
 
     public int Count => _lisque.Count;
@@ -81,17 +83,23 @@ public class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ILisqu
 
     public KeyValuePair<TKey, TValue> PopFirst()
     {
-        return _lisque.PopFirst();
+        KeyValuePair<TKey, TValue> pair = _lisque.PopFirst();
+        _dict.Remove(pair.Key);
+        return pair;
     }
 
     public KeyValuePair<TKey, TValue> PopLast()
     {
-        return _lisque.PopLast();
+        KeyValuePair<TKey, TValue> pair = _lisque.PopLast();
+        _dict.Remove(pair.Key);
+        return pair;
     }
 
     public KeyValuePair<TKey, TValue> PopAt(int index)
     {
-        return _lisque.PopAt(index);
+        KeyValuePair<TKey, TValue> pair = _lisque.PopAt(index);
+        _dict.Remove(pair.Key);
+        return pair;
     }
 
     public KeyValuePair<TKey, TValue> First
@@ -108,9 +116,7 @@ public class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ILisqu
 
     public void Add(TKey key, TValue value)
     {
-        int oldCount = _dict.Count;
-        _dict.Add(key, value);
-        if(oldCount < _dict.Count)
+        if(_dict.TryAdd(key, value))
             _lisque.Add(new KeyValuePair<TKey, TValue>(key, value));
     }
 
@@ -136,10 +142,9 @@ public class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ILisqu
         get => _dict[key];
         set
         {
-            int oldCount = _dict.Count;
             _dict[key] = value;
-            if(oldCount < _dict.Count)
-                _lisque.Add(new KeyValuePair<TKey, TValue>(key, value));
+            var index = _lisque.FindIndex(match => match.Key.Equals(key));
+            _lisque[index] = new KeyValuePair<TKey, TValue>(key, value);
         }
     }
 
