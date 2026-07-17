@@ -184,4 +184,15 @@ public class IndexedSetTest
         }
     }
 
+    [Test]
+    public void TestRemoveAll()
+    {
+        var indexedSets = GenerateAll();
+        for (var i = 0; i < 4; i++)
+        {
+            indexedSets[i].RemoveWhere(x => x.EndsWith('a'));
+            Assert.That(indexedSets[i], Has.Count.EqualTo(1));
+        }
+    }
+
 }
