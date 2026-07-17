@@ -269,6 +269,11 @@ public class IndexedSet<T> : ISet<T>, ILisque<T> where T : notnull
     {
         _lisque.Reverse();
     }
+
+    public void Reverse(int start, int length)
+    {
+        _lisque.Reverse(start, length);
+    }
     
     public void Sort()
     {
