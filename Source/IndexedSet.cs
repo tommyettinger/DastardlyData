@@ -189,6 +189,31 @@ public class IndexedSet<T> : ISet<T>, ILisque<T> where T : notnull
     {
         return _lisque.IndexOf(item);
     }
+    
+    public int IndexOf(T item, int index)
+    {
+        return _lisque.IndexOf(item, index);
+    }
+    
+    public int IndexOf(T item, int index, int count)
+    {
+        return _lisque.IndexOf(item, index, count);
+    }
+    
+    public int LastIndexOf(T item)
+    {
+        return _lisque.LastIndexOf(item);
+    }
+    
+    public int LastIndexOf(T item, int index)
+    {
+        return _lisque.LastIndexOf(item, index);
+    }
+    
+    public int LastIndexOf(T item, int index, int count)
+    {
+        return _lisque.LastIndexOf(item, index, count);
+    }
 
     public void Insert(int index, T item)
     {
