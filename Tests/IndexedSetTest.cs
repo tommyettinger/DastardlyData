@@ -164,4 +164,24 @@ public class IndexedSetTest
         Assert.That(indexedSet.LastIndexOf("beta1", 8, 8), Is.EqualTo(8));
     }
 
+    [Test]
+    public void TestListEquivalence()
+    {
+        var indexedSets = GenerateAll();
+        List<string>[] lists = [new(indexedSets[0]), new(indexedSets[1]), new(indexedSets[2]), new(indexedSets[3])];
+        for (int i = 0; i < 4; i++)
+        {
+            Assert.That(indexedSets[i], Is.EquivalentTo(lists[i]));
+            indexedSets[i].Reverse();
+            lists[i].Reverse();
+            Assert.That(indexedSets[i], Is.EquivalentTo(lists[i]));
+            indexedSets[i].Reverse(2, 3);
+            lists[i].Reverse(2, 3);
+            Assert.That(indexedSets[i], Is.EquivalentTo(lists[i]));
+            indexedSets[i].Sort();
+            lists[i].Sort();
+            Assert.That(indexedSets[i], Is.EquivalentTo(lists[i]));
+        }
+    }
+
 }
