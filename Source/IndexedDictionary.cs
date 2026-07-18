@@ -57,7 +57,8 @@ public class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ILisqu
 
     public void Insert(int index, KeyValuePair<TKey, TValue> item)
     {
-        _lisque.Insert(index, item);
+        if(_dict.TryAdd(item.Key, item.Value)) 
+            _lisque.Insert(index, item);
     }
 
     public void RemoveAt(int index)
@@ -73,12 +74,14 @@ public class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ILisqu
 
     public void PushFirst(KeyValuePair<TKey, TValue> item)
     {
-        _lisque.PushFirst(item);
+        if(_dict.TryAdd(item.Key, item.Value)) 
+            _lisque.PushFirst(item);
     }
 
     public void PushLast(KeyValuePair<TKey, TValue> item)
     {
-        _lisque.PushLast(item);
+        if(_dict.TryAdd(item.Key, item.Value))
+            _lisque.PushLast(item);
     }
 
     public KeyValuePair<TKey, TValue> PopFirst()
