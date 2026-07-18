@@ -1301,6 +1301,19 @@ public class Lisque<T> : ILisque<T>, IEquatable<Lisque<T>>
     }
 
     /// <summary>
+    /// Removes the last item matching the given Predicate.
+    /// </summary>
+    /// <param name="match">A Predicate of T that should return true if an item should be removed.</param>
+    /// <returns>If an item was removed, true, otherwise false.</returns>
+    public bool RemoveLast(Predicate<T> match)
+    {
+        var index = FindLastIndex(match);
+        if (index == -1) return false;
+        RemoveAt(index);
+        return true;
+    }
+
+    /// <summary>
     /// Creates a shallow copy of a range of elements in the source lisque.
     /// </summary>
     /// <param name="start">The zero-based index at which the range starts.</param>
