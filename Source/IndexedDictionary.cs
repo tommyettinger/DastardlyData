@@ -33,7 +33,8 @@ public class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ILisqu
 
     public bool Contains(KeyValuePair<TKey, TValue> item)
     {
-        return _lisque.Contains(item);
+        return _dict.TryGetValue(item.Key, out var o) && ((o is not null && o.Equals(item.Value)) || o is null && item.Value is null);
+        
     }
 
     public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
