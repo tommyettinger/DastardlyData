@@ -128,7 +128,7 @@ public class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ILisqu
     public bool Remove(TKey key)
     {
         if (!_dict.Remove(key)) return false;
-        _lisque.RemoveAll(pair => pair.Key.Equals(key));
+        _lisque.RemoveFirst(pair => _dict.Comparer.Equals(pair.Key, key));
         return true;
     }
 
