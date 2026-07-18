@@ -63,7 +63,8 @@ public class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ILisqu
 
     public void RemoveAt(int index)
     {
-        _lisque.RemoveAt(index);
+        var pair = _lisque.PopAt(index);
+        _dict.Remove(pair.Key);
     }
 
     KeyValuePair<TKey, TValue> IList<KeyValuePair<TKey, TValue>>.this[int index]
