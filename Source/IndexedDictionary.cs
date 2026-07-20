@@ -20,7 +20,26 @@ public class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ILisqu
         _dict = new Dictionary<TKey, TValue>(capacity, comparer);
         _lisque = new Lisque<KeyValuePair<TKey, TValue>>(capacity);
     }
-    
+
+    public IndexedDictionary(IDictionary<TKey, TValue> dictionary, IEqualityComparer<TKey>? comparer = null) :
+        this(dictionary.Count, comparer)
+    {
+        foreach (var pair in dictionary)
+        {
+            Add(pair.Key, pair.Value);
+        }
+    }
+
+    public IndexedDictionary(IEnumerable<KeyValuePair<TKey, TValue>> collection,
+        IEqualityComparer<TKey>? comparer = null) :
+        this((collection as ICollection<KeyValuePair<TKey, TValue>>)?.Count ?? 0, comparer)
+    {
+        foreach (var pair in collection)
+        {
+            Add(pair.Key, pair.Value);
+        }
+    }
+
     public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
     {
         return _lisque.GetEnumerator();
