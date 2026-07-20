@@ -8,6 +8,18 @@ public class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ILisqu
 {
     private readonly Dictionary<TKey, TValue> _dict;
     private readonly Lisque<KeyValuePair<TKey, TValue>> _lisque;
+
+    public IndexedDictionary(IEqualityComparer<TKey>? comparer = null)
+    {
+        _dict = new Dictionary<TKey, TValue>(comparer);
+        _lisque = new Lisque<KeyValuePair<TKey, TValue>>();
+    }
+    
+    public IndexedDictionary(int capacity, IEqualityComparer<TKey>? comparer = null)
+    {
+        _dict = new Dictionary<TKey, TValue>(capacity, comparer);
+        _lisque = new Lisque<KeyValuePair<TKey, TValue>>(capacity);
+    }
     
     public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
     {
