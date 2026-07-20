@@ -26,7 +26,7 @@ public class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ILisqu
     {
         foreach (var pair in dictionary)
         {
-            Add(pair.Key, pair.Value);
+            TryAdd(pair);
         }
     }
 
@@ -36,7 +36,7 @@ public class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ILisqu
     {
         foreach (var pair in collection)
         {
-            Add(pair.Key, pair.Value);
+            TryAdd(pair);
         }
     }
 
@@ -54,6 +54,20 @@ public class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ILisqu
     {
         if(_dict.TryAdd(item.Key, item.Value))
             _lisque.Add(item);
+    }
+
+    public bool TryAdd(KeyValuePair<TKey, TValue> item)
+    {
+        if (!_dict.TryAdd(item.Key, item.Value)) return false;
+        _lisque.Add(item);
+        return true;
+    }
+
+    public bool TryAdd(TKey key, TValue value)
+    {
+        if (!_dict.TryAdd(key, value)) return false;
+        _lisque.Add(new KeyValuePair<TKey, TValue>(key, value));
+        return true;
     }
 
     public void Clear()
