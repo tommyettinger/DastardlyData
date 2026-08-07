@@ -195,4 +195,21 @@ public class IndexedSetTest
         }
     }
 
+    [Test]
+    public void TestSetUniqueness()
+    {
+        var indexedSets = GenerateAll();
+        for (var i = 0; i < 4; i++)
+        {
+            var size = indexedSets[i].Count;
+            indexedSets[i].Add("beta");
+            Assert.That(indexedSets[i], Has.Count.EqualTo(size));
+            indexedSets[i].Remove("beta");
+            indexedSets[i].RemoveAt(2);
+            Assert.That(indexedSets[i], Has.Count.EqualTo(size - 2));
+            indexedSets[i].Add("beta");
+            indexedSets[i].Add("beta");
+            Assert.That(indexedSets[i], Has.Count.EqualTo(size - 1));
+        }
+    }
 }
