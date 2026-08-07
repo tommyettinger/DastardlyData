@@ -107,6 +107,12 @@ public class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ILisqu
             _lisque.Insert(index, item);
     }
 
+    public void Insert(int index, TKey key, TValue value)
+    {
+        if(_dict.TryAdd(key, value)) 
+            _lisque.Insert(index, new KeyValuePair<TKey, TValue>(key, value));
+    }
+
     public void RemoveAt(int index)
     {
         var pair = _lisque.PopAt(index);
@@ -129,6 +135,18 @@ public class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ILisqu
     {
         if(_dict.TryAdd(item.Key, item.Value))
             _lisque.PushLast(item);
+    }
+
+    public void PushFirst(TKey key, TValue value)
+    {
+        if(_dict.TryAdd(key, value)) 
+            _lisque.PushFirst(new KeyValuePair<TKey, TValue>(key, value));
+    }
+
+    public void PushLast(TKey key, TValue value)
+    {
+        if(_dict.TryAdd(key, value)) 
+            _lisque.PushLast(new KeyValuePair<TKey, TValue>(key, value));
     }
 
     public KeyValuePair<TKey, TValue> PopFirst()
