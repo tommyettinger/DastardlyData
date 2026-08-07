@@ -198,6 +198,21 @@ public class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ILisqu
         }
     }
 
+    public TKey KeyAt(int index)
+    {
+        return _lisque[index].Key;
+    }
+    
+    public TValue ValueAt(int index)
+    {
+        return _lisque[index].Value;
+    }
+
+    public KeyValuePair<TKey, TValue> EntryAt(int index)
+    {
+        return _lisque[index];
+    }
+
     public ICollection<TKey> Keys => new Lisque<TKey>(_lisque.Select(pair => pair.Key));
 
     public ICollection<TValue> Values => new Lisque<TValue>(_lisque.Select(pair => pair.Value));
