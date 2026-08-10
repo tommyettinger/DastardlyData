@@ -225,8 +225,8 @@ public class IndexedDictionaryTest
             indexedDictionaries[i].Remove("beta");
             indexedDictionaries[i].RemoveAt(2);
             Assert.That(indexedDictionaries[i], Has.Count.EqualTo(size - 2));
-            indexedDictionaries[i].Add("beta", "beta");
-            indexedDictionaries[i].Add("beta", "beta");
+            indexedDictionaries[i].Add("beta", "beta1");
+            indexedDictionaries[i].Add("beta", "beta2");
             Assert.That(indexedDictionaries[i], Has.Count.EqualTo(size - 1));
         }
     }

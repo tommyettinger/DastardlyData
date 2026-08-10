@@ -226,6 +226,13 @@ public class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ILisqu
         return _lisque[index].Value;
     }
 
+    public void SetValueAt(int index, TValue value)
+    {
+        KeyValuePair<TKey, TValue> old = _lisque[index];
+        _dict[old.Key] = value;
+        _lisque[index] = new KeyValuePair<TKey, TValue>(old.Key, value);
+    }
+
     public KeyValuePair<TKey, TValue> EntryAt(int index)
     {
         return _lisque[index];
