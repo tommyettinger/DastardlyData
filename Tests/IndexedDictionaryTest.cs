@@ -230,4 +230,17 @@ public class IndexedDictionaryTest
             Assert.That(indexedDictionaries[i], Has.Count.EqualTo(size - 1));
         }
     }
+
+    [Test]
+    public void TestConstructors()
+    {
+        var  indexedDictionaries = GenerateAll();
+        for (var i = 0; i < 4; i++)
+        {
+            IReadOnlyList<string> keys = indexedDictionaries[i].Keys.ToArray();
+            IReadOnlyList<string> vals = indexedDictionaries[i].Values.ToArray();
+            var con = new IndexedDictionary<string, string>(keys, vals);
+            Assert.That(indexedDictionaries[i], Is.EquivalentTo(con));
+        }
+    }
 }
