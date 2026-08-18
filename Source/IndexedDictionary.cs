@@ -34,8 +34,8 @@ public class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ILisqu
     /// Creates an IndexedDictionary using a pair of IReadOnlyList s (one for keys, one for values), and optionally an
     /// IEqualityComparer.
     /// </summary>
-    /// <param name="keys">Often an array of TKey items</param>
-    /// <param name="values">Often an array of TValue items</param>
+    /// <param name="keys">Often an array of TKey items.</param>
+    /// <param name="values">Often an array of TValue items.</param>
     /// <param name="comparer">The IEqualityComparer implementation to use when comparing keys, or null (the default) to
     /// use the default EqualityComparer for the type of the key.</param>
     public IndexedDictionary(IReadOnlyList<TKey> keys, IReadOnlyList<TValue> values, IEqualityComparer<TKey>? comparer = null) :
@@ -221,6 +221,60 @@ public class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ILisqu
     public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)
     {
         return _dict.TryGetValue(key, out value);
+    }
+
+    /// <summary>
+    /// Sorts the order of this IndexedDictionary with the default Comparer for keys. 
+    /// </summary>
+    public void SortByKey()
+    {
+        Comparer<TKey> comparer = Comparer<TKey>.Default;
+        _lisque.Sort((a, b) => comparer.Compare(a.Key, b.Key));
+    }
+
+    /// <summary>
+    /// Sorts the order of this IndexedDictionary with the given IComparer for keys. 
+    /// </summary>
+    public void SortByKey(IComparer<TKey> comparer)
+    {
+        _lisque.Sort((a, b) => comparer.Compare(a.Key, b.Key));
+    }
+
+    /// <summary>
+    /// Sorts the order of this IndexedDictionary with the default Comparer for values. 
+    /// </summary>
+    public void SortByValue()
+    {
+        Comparer<TValue> comparer = Comparer<TValue>.Default;
+        _lisque.Sort((a, b) => comparer.Compare(a.Value, b.Value));
+    }
+
+    /// <summary>
+    /// Sorts the order of this IndexedDictionary with the given IComparer for values. 
+    /// </summary>
+    public void SortByValue(IComparer<TValue> comparer)
+    {
+        _lisque.Sort((a, b) => comparer.Compare(a.Value, b.Value));
+    }
+
+    /// <summary>
+    /// Sorts the order of this IndexedDictionary with the default Comparer for keys. 
+    /// </summary>
+    /// <remarks>
+    /// This simply calls <see cref="SortByKey()"/>.
+    /// </remarks>
+    public void Sort()
+    { 
+        SortByKey();        
+    }
+
+    /// <summary>
+    ///  Sorts the order of this IndexedDictionary with the given IComparer of KeyValuePair entries.
+    /// </summary>
+    /// <param name="comparer">Any IComparer that can compare KeyValuePairs with the same TKey and TValue as this.</param>
+    public void Sort(IComparer<KeyValuePair<TKey, TValue>> comparer)
+    {
+        _lisque.Sort(comparer);
     }
 
     public TValue this[TKey key]
