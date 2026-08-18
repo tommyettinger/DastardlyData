@@ -235,11 +235,24 @@ public class IndexedDictionaryTest
     public void TestConstructors()
     {
         var  indexedDictionaries = GenerateAll();
+        // Test the pair of lists/arrays constructor
         for (var i = 0; i < 4; i++)
         {
             IReadOnlyList<string> keys = indexedDictionaries[i].Keys.ToArray();
             IReadOnlyList<string> vals = indexedDictionaries[i].Values.ToArray();
             var con = new IndexedDictionary<string, string>(keys, vals);
+            Assert.That(indexedDictionaries[i], Is.EquivalentTo(con));
+        }
+        // test the IDictionary copy constructor
+        for (var i = 0; i < 4; i++)
+        {
+            var con = new IndexedDictionary<string, string>(indexedDictionaries[i]);
+            Assert.That(indexedDictionaries[i], Is.EquivalentTo(con));
+        }
+        // test the IEnumerable constructor
+        for (var i = 0; i < 4; i++)
+        {
+            var con = new IndexedDictionary<string, string>(indexedDictionaries[i].OrderBy(x => x.Key));
             Assert.That(indexedDictionaries[i], Is.EquivalentTo(con));
         }
     }
