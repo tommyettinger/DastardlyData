@@ -30,6 +30,24 @@ public class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ILisqu
         }
     }
 
+    /// <summary>
+    /// Creates an IndexedDictionary using a pair of IReadOnlyList s (one for keys, one for values), and optionally an
+    /// IEqualityComparer.
+    /// </summary>
+    /// <param name="keys">Often an array of TKey items</param>
+    /// <param name="values">Often an array of TValue items</param>
+    /// <param name="comparer">The IEqualityComparer implementation to use when comparing keys, or null (the default) to
+    /// use the default EqualityComparer for the type of the key.</param>
+    public IndexedDictionary(IReadOnlyList<TKey> keys, IReadOnlyList<TValue> values, IEqualityComparer<TKey>? comparer = null) :
+        this(Math.Min(keys.Count, values.Count), comparer)
+    {
+        var len = Math.Min(keys.Count, values.Count);
+        for (var i = 0; i < len; i++)
+        {
+            TryAdd(keys[i], values[i]);
+        }
+    }
+
     public IndexedDictionary(IEnumerable<KeyValuePair<TKey, TValue>> collection,
         IEqualityComparer<TKey>? comparer = null) :
         this((collection as ICollection<KeyValuePair<TKey, TValue>>)?.Count ?? 0, comparer)
