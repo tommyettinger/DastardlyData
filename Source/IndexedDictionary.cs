@@ -277,6 +277,17 @@ public class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ILisqu
         _lisque.Sort(comparer);
     }
 
+    /// <summary>
+    /// Reverses the order of this IndexedDictionary. 
+    /// </summary>
+    /// <remarks>
+    /// This runs in linear time and mutates this IndexedDictionary in-place.
+    /// </remarks>
+    public void Reverse()
+    {
+        _lisque.Reverse();
+    }
+
     public TValue this[TKey key]
     {
         get => _dict[key];
