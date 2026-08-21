@@ -3,8 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Dastardly.Data;
 
-public class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ILisque<KeyValuePair<TKey, TValue>>
-    where TKey : notnull
+public class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ILisque<KeyValuePair<TKey, TValue>>, IEquatable<IndexedDictionary<TKey, TValue>> where TKey : notnull
 {
     private readonly Dictionary<TKey, TValue> _dict;
     private readonly Lisque<KeyValuePair<TKey, TValue>> _lisque;
@@ -324,6 +323,50 @@ public class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ILisqu
     public ICollection<TKey> Keys => new Lisque<TKey>(_lisque.Select(pair => pair.Key));
 
     public ICollection<TValue> Values => new Lisque<TValue>(_lisque.Select(pair => pair.Value));
+
+    public bool Equals(IndexedDictionary<TKey, TValue>? other)
+    {
+        if (other is null) return false;
+        if (ReferenceEquals(this, other)) return true;
+        if (Count != other.Count) return false;
+        foreach (KeyValuePair<TKey, TValue> entry in _lisque)
+        {
+            if (!other.TryGetValue(entry.Key, out TValue? value) ||
+                !EqualityComparer<TValue>.Default.Equals(value, entry.Value)) return false;
+        }
+
+        return true;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is null) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((IndexedDictionary<TKey, TValue>)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        var hash = Count + 1;
+        foreach (var pair in this)
+        {
+            hash += pair.Key.GetHashCode();
+            if(pair.Value != null) 
+                hash ^= pair.Value.GetHashCode();
+        }
+        return hash;
+    }
+
+    public static bool operator ==(IndexedDictionary<TKey, TValue>? left, IndexedDictionary<TKey, TValue>? right)
+    {
+        return Equals(left, right);
+    }
+
+    public static bool operator !=(IndexedDictionary<TKey, TValue>? left, IndexedDictionary<TKey, TValue>? right)
+    {
+        return !Equals(left, right);
+    }
 
     /// <summary>
     /// Gets the direct backing Lisque of KeyValuePair entries this uses for its iteration order. Use this with caution.
