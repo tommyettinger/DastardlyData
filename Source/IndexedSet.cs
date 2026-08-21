@@ -354,4 +354,14 @@ public class IndexedSet<T> : ISet<T>, ILisque<T> where T : notnull
         return !Equals(left, right);
     }
 
+    /// <summary>
+    /// Gets the direct backing Lisque of T items this uses for its iteration order. Use this with caution.
+    /// </summary>
+    /// <remarks>
+    /// This allows modifying the iteration order in ways that are normally invalid, such as adding duplicate items or
+    /// items not present in the IndexedSet. This is meant to allow specialized operations like swapping the
+    /// positions of items, or shuffling the order.
+    /// </remarks>
+    public Lisque<T> Order => _lisque;
+
 }

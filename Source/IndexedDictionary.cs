@@ -324,4 +324,14 @@ public class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ILisqu
     public ICollection<TKey> Keys => new Lisque<TKey>(_lisque.Select(pair => pair.Key));
 
     public ICollection<TValue> Values => new Lisque<TValue>(_lisque.Select(pair => pair.Value));
+
+    /// <summary>
+    /// Gets the direct backing Lisque of KeyValuePair entries this uses for its iteration order. Use this with caution.
+    /// </summary>
+    /// <remarks>
+    /// This allows modifying the iteration order in ways that are normally invalid, such as adding duplicate keys or
+    /// keys not present in the IndexedDictionary. This is meant to allow specialized operations like swapping the
+    /// positions of entries, or shuffling the order.
+    /// </remarks>
+    public Lisque<KeyValuePair<TKey, TValue>> Order => _lisque;
 }
