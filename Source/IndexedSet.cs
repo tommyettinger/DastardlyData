@@ -2,7 +2,7 @@
 
 namespace Dastardly.Data;
 
-public class IndexedSet<T> : ISet<T>, ILisque<T>, IEquatable<IndexedSet<T>> where T : notnull
+public class IndexedSet<T> : ISet<T>, ILisque<T>, IEquatable<ISet<T>> where T : notnull
 {
     private readonly HashSet<T> _set;
     private readonly Lisque<T> _lisque;
@@ -325,11 +325,10 @@ public class IndexedSet<T> : ISet<T>, ILisque<T>, IEquatable<IndexedSet<T>> wher
         _lisque.TrimExcess();
     }
 
-    public bool Equals(IndexedSet<T>? other)
+    public bool Equals(ISet<T>? other)
     {
         if (other is null) return false;
         if (ReferenceEquals(this, other)) return true;
-        if (other.GetType() != GetType()) return false;
         return SetEquals(other);
     }
 
