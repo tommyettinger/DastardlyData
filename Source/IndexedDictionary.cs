@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Dastardly.Data;
 
-public class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ILisque<KeyValuePair<TKey, TValue>>, IEquatable<IndexedDictionary<TKey, TValue>> where TKey : notnull
+public class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ILisque<KeyValuePair<TKey, TValue>>, IEquatable<IDictionary<TKey, TValue>> where TKey : notnull
 {
     private readonly Dictionary<TKey, TValue> _dict;
     private readonly Lisque<KeyValuePair<TKey, TValue>> _lisque;
@@ -324,7 +324,7 @@ public class IndexedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ILisqu
 
     public ICollection<TValue> Values => new Lisque<TValue>(_lisque.Select(pair => pair.Value));
 
-    public bool Equals(IndexedDictionary<TKey, TValue>? other)
+    public bool Equals(IDictionary<TKey, TValue>? other)
     {
         if (other is null) return false;
         if (ReferenceEquals(this, other)) return true;
