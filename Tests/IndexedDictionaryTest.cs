@@ -267,6 +267,13 @@ public class IndexedDictionaryTest
             indexedDictionaries[i].Sort();
             for(int j = 0, n = con.Count; j < n; j++)
             {
+                Assert.That(indexedDictionaries[i].KeyAt(j), Is.EqualTo(con.KeyAt(j)));
+                Assert.That(indexedDictionaries[i].ValueAt(j), Is.EqualTo(con.ValueAt(j)));
+            }
+            indexedDictionaries[i].SortByValue();
+            for(int j = 0, n = con.Count; j < n; j++)
+            {
+                Assert.That(indexedDictionaries[i].KeyAt(j), Is.EqualTo(con.KeyAt(j)));
                 Assert.That(indexedDictionaries[i].ValueAt(j), Is.EqualTo(con.ValueAt(j)));
             }
         }
