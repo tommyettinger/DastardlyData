@@ -7,7 +7,7 @@ public interface ITerm : IEquatable<ITerm>
 {
     public bool Match(ICollection<string> coll);
     
-    public ICollection<string> Remove(ICollection<string> coll);
+    public Lisque<string> Remove(Lisque<string> coll);
 
     public string? Item { get; }
     
