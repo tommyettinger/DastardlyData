@@ -47,8 +47,9 @@ public class Just(string data = "") : ITerm
         return (other is Just just) ? string.Compare(Data, just.Data, StringComparison.InvariantCulture) :  (Symbol - other.Symbol);;
     }
 }
+
 /// <summary>
-/// Simply matches a single String value, with no additional terms involved.
+/// Matches when the term it holds doesn't match.
 /// </summary>
 public class Not(ITerm term) : ITerm
 {
@@ -90,5 +91,96 @@ public class Not(ITerm term) : ITerm
         if (other is null) return 1;
         return other.CompareTo(Term);
         
+    }
+}
+
+/// <summary>
+/// Takes one or more terms and matches if any of those terms match.
+/// </summary>
+/// <param name="terms">One or more ITerm items that this can match any of.</param>
+public class Any(params ITerm[] terms) : ITerm
+{
+    public readonly Lisque<ITerm> Terms = new(terms);
+
+    public string? Item => null;
+
+    public char Symbol => '|';
+    
+    public string Name => "any";
+
+    public bool Match(ICollection<string> coll)
+    {
+        foreach (var t in Terms)
+        {
+            if(t.Match(coll)) return true;
+        }
+
+        return false;
+    }
+
+    public Lisque<string> Remove(Lisque<string> coll)
+    {
+        foreach (var t in Terms)
+        {
+            t.Remove(coll);
+        }
+
+        return coll;
+    }
+
+    public ITerm Canonicalize()
+    {
+        for (int i = 0; i < Terms.Count; i++)
+        {
+            ITerm child = Terms[i];
+            if (child is Any any)
+            {
+                Terms.RemoveAt(i--);
+                Terms.AddRange(any.Terms);
+            }
+        }
+
+        foreach (var t in Terms)
+        {
+            t.Canonicalize();
+        }
+
+        Terms.Sort();
+        return this;
+    }
+
+    public bool Equals(ITerm? other)
+    {
+        if (other is Any o)
+        {
+            if (Terms.Count != o.Terms.Count) return false;
+
+            for (var i = 0; i < Terms.Count; i++)
+            {
+                if (!Terms[i].Equals(o.Terms[i])) return false;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public int CompareTo(ITerm? other)
+    {
+        if (ReferenceEquals(this, other)) return 0;
+        if (other is null) return 1;
+        if (other is Any a)
+        {
+            if (Terms.Count != a.Terms.Count)
+                return Terms.Count - a.Terms.Count;
+            for (int i = 0; i < Terms.Count; i++)
+            {
+                var comp = Terms[i].CompareTo(a.Terms[i]);
+                if (comp != 0) return comp;
+            }
+        }
+
+        return Symbol - other.Symbol;
     }
 }
