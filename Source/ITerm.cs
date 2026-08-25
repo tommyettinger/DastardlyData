@@ -3,7 +3,7 @@
 /// <summary>
 /// Mostly internal; meant to be used by Junction to form filters for ICollections of string.
 /// </summary>
-public interface ITerm : IEquatable<ITerm>
+public interface ITerm : IEquatable<ITerm>, IComparable<ITerm>
 {
     public bool Match(ICollection<string> coll);
     

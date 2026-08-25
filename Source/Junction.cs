@@ -39,6 +39,13 @@ public class Just(string data = "") : ITerm
         if (other is not Just) return false;
         return Data == other.Item;
     }
+
+    public int CompareTo(ITerm? other)
+    {
+        if (ReferenceEquals(this, other)) return 0;
+        if (other is null) return 1;
+        return (other is Just just) ? string.Compare(Data, just.Data, StringComparison.InvariantCulture) :  (Symbol - other.Symbol);;
+    }
 }
 /// <summary>
 /// Simply matches a single String value, with no additional terms involved.
@@ -75,5 +82,13 @@ public class Not(ITerm term) : ITerm
     {
         if (other is Not o) return Term.Equals(o.Term);
         return false;
+    }
+
+    public int CompareTo(ITerm? other)
+    {
+        if (ReferenceEquals(this, other)) return 0;
+        if (other is null) return 1;
+        return other.CompareTo(Term);
+        
     }
 }
