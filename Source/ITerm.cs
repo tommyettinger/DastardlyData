@@ -9,11 +9,11 @@ public interface ITerm : IEquatable<ITerm>
     
     public ICollection<string> Remove(ICollection<string> coll);
 
-    public string? Item { get; protected set; }
+    public string? Item { get; }
     
     public ITerm Canonicalize();
     
-    public char Symbol { get; protected set; }
+    public char Symbol { get; }
     
-    public string Name { get; protected set; }
+    public string Name { get; }
 }
