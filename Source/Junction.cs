@@ -1,8 +1,65 @@
 ﻿namespace Dastardly.Data;
 
-public class Junction
+/// <summary>
+/// Matches potentially more than one string in different ways against a supplied ICollection of string. 
+/// </summary>
+/// <remarks>
+/// This is inspired by the Junction type in <a href="https://docs.raku.org/type/Junction">Raku</a>, but
+/// isn't equivalent. A Junction is the outermost parent of its hierarchy, and contains a <see cref="ITerm"/> node.
+/// use <see cref="Match"/> to checj if a Junction matches an ICollection.
+/// </remarks>
+/// <param name="root">The root term for the Junction.</param>
+public class Junction(ITerm root) : ITerm
 {
+    public ITerm Root = root;
     
+    public string? Item => null;
+
+    public char Symbol => '@';
+    
+    public string Name => "junction";
+
+    public bool Match(ICollection<string> coll)
+    {
+        return Root.Match(coll);
+    }
+
+    public Lisque<string> Remove(Lisque<string> coll)
+    {
+        return Root.Remove(coll);
+    }
+
+    public ITerm Canonicalize()
+    {
+        return Root.Canonicalize();
+    }
+
+    public bool Equals(ITerm? other)
+    {
+        if (other is Junction o) return Root.Equals(o.Root);
+        return false;
+    }
+
+    public int CompareTo(ITerm? other)
+    {
+        if (ReferenceEquals(this, other)) return 0;
+        if (other is null) return 1;
+        return Root.CompareTo(other);
+    }
+
+    public Junction Negate()
+    {
+        if (Root is Not n)
+        {
+            Root = n.Term;
+        }
+        else
+        {
+            Root = new Not(Root);
+        }
+
+        return this;
+    }
 }
 
 /// <summary>
