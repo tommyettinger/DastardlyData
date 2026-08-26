@@ -282,3 +282,96 @@ public class All(params ITerm[] terms) : ITerm
         return Symbol - other.Symbol;
     }
 }
+
+/// <summary>
+/// Takes one or more terms and matches if exactly one of those terms matches.
+/// </summary>
+/// <param name="terms">One or more ITerm items that this must match exactly one of.</param>
+public class One(params ITerm[] terms) : ITerm
+{
+    public readonly Lisque<ITerm> Terms = new(terms);
+
+    public string? Item => null;
+
+    public char Symbol => '^';
+    
+    public string Name => "one";
+
+    public bool Match(ICollection<string> coll)
+    {
+        var count = 0;
+        for (var i = 0; i < Terms.Count && count <= 1; i++)
+        {
+            if (Terms[i].Match(coll)) count++;
+        }
+
+        return count == 1;
+    }
+
+    public Lisque<string> Remove(Lisque<string> coll)
+    {
+        foreach (var t in Terms)
+        {
+            if(t.Match(coll)) t.Remove(coll);
+        }
+
+        return coll;
+    }
+
+    public ITerm Canonicalize()
+    {
+        for (int i = 0, n = Terms.Count; i < n; i++)
+        {
+            ITerm child = Terms[i];
+            if (child is One one)
+            {
+                Terms.RemoveAt(i--);
+                n--;
+                Terms.AddRange(one.Terms);
+            }
+        }
+
+        foreach (var t in Terms)
+        {
+            t.Canonicalize();
+        }
+
+        Terms.Sort();
+        return this;
+    }
+
+    public bool Equals(ITerm? other)
+    {
+        if (other is One o)
+        {
+            if (Terms.Count != o.Terms.Count) return false;
+
+            for (var i = 0; i < Terms.Count; i++)
+            {
+                if (!Terms[i].Equals(o.Terms[i])) return false;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public int CompareTo(ITerm? other)
+    {
+        if (ReferenceEquals(this, other)) return 0;
+        if (other is null) return 1;
+        if (other is One o)
+        {
+            if (Terms.Count != o.Terms.Count)
+                return Terms.Count - o.Terms.Count;
+            for (int i = 0; i < Terms.Count; i++)
+            {
+                var comp = Terms[i].CompareTo(o.Terms[i]);
+                if (comp != 0) return comp;
+            }
+        }
+
+        return Symbol - other.Symbol;
+    }
+}
