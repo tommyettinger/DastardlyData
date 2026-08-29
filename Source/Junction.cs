@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Frozen;
+using System.Text;
 
 namespace Dastardly.Data;
 
@@ -105,6 +106,61 @@ public class Junction(ITerm root) : ITerm
         if (sb.Length > 0)
             deque.Add(sb.ToString());
         return deque;
+    }
+    
+    private static readonly FrozenDictionary<string, int> Operators = new Dictionary<string, int>
+    {
+        {"~", 27}, {"^", 9}, {"&", 6}, {"|", 3}
+    }.ToFrozenDictionary();
+    
+    /// <summary>
+    /// Checks if the operator precedence of other is greater than or equal to opPrecedence.
+    /// If other is not a known operator, this returns false unless opPrecedence is negative.
+    /// </summary>
+    /// <remarks>
+    /// Used internally by <see cref="ShuntingYard"/>.</remarks>
+    /// <param name="opPrecedence">the precedence level to compare to.</param>
+    /// <param name="other">The operator String to look up.</param>
+    /// <returns>true if other represents a known operator with precedence greater than or equal to opPrecedence.</returns>
+    private static bool CheckPrecedence(int opPrecedence, string other) {
+        return Operators.GetValueOrDefault(other, 0) >= opPrecedence;
+    }
+
+    /// <summary>
+    /// Implements the <a href="https://en.wikipedia.org/wiki/Shunting_yard_algorithm">Shunting yard algorithm</a>.
+    /// </summary>
+    /// <remarks>
+    /// <a href="https://eddmann.com/posts/shunting-yard-implementation-in-java/">Credit to Edd Mann</a>.
+    /// Edd's implementation operates on a StringBuilder, whereas we output another Lisque, so the order needed
+    /// some work.
+    /// </remarks>
+    /// <param name="tokens">A Lisque typically produced by <see cref="Lex"/>.</param>
+    /// <returns>The tokens, rearranged in postfix order and with parentheses removed.</returns>
+    protected static Lisque<string> ShuntingYard(Lisque<string> tokens) {
+        Lisque<string> output = new(tokens.Count), stack = new(16);
+
+        foreach (var token in tokens)
+        {
+            if (Operators.ContainsKey(token)) {
+                var opPrecedence = Operators[token];
+                while (stack.Count > 0 && CheckPrecedence(opPrecedence, stack.First))
+                    output.Add(stack.PopFirst());
+                stack.PushFirst(token);
+            } else if (token == "(") {
+                stack.PushFirst(token);
+            } else if (token == ")") {
+                while ("(" != stack.First)
+                    output.PushLast(stack.PopFirst());
+                stack.PopFirst();
+            } else {
+                output.Add(token);
+            }
+        }
+
+        while (stack.Count > 0)
+            output.Add(stack.PopFirst());
+
+        return output;
     }
 
 }
