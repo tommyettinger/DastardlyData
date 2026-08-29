@@ -120,7 +120,7 @@ public class Junction(ITerm root) : ITerm
     /// <remarks>
     /// Used internally by <see cref="ShuntingYard"/>.</remarks>
     /// <param name="opPrecedence">the precedence level to compare to.</param>
-    /// <param name="other">The operator String to look up.</param>
+    /// <param name="other">The operator string to look up.</param>
     /// <returns>true if other represents a known operator with precedence greater than or equal to opPrecedence.</returns>
     private static bool CheckPrecedence(int opPrecedence, string other) {
         return Operators.GetValueOrDefault(other, 0) >= opPrecedence;
@@ -163,10 +163,56 @@ public class Junction(ITerm root) : ITerm
         return output;
     }
 
+    /// <summary>
+    /// Parses the string text into one Junction.
+    /// </summary>
+    /// <param name="text">The string to parse.</param>
+    /// <returns>The resulting Junction.</returns>
+    public static Junction Parse(string text) {
+        return Parse(text, 0, text.Length);
+    }
+
+    /// <summary>
+    /// Parses a substring of text into one Junction. This reads length chars from text, starting at start.
+    /// </summary>
+    /// <param name="text">The string to parse.</param>
+    /// <param name="start">The first index to read from, inclusive</param>
+    /// <param name="length">The length of the substring of text to read.</param>
+    /// <returns>The resulting Junction.</returns>
+    public static Junction Parse(string text, int start, int length) {
+        var tokens = Lex(text, start, length);
+        tokens = ShuntingYard(tokens);
+        Lisque<ITerm> terms = new (tokens.Count);
+        foreach (var tok in tokens)
+        {
+            if (Operators.ContainsKey(tok)) {
+                ITerm right = terms.PopLast(), left = terms.PopLast();
+                switch (tok[0]) {
+                    case '~':
+                        terms.PushLast(new Not(right));
+                        break;
+                    case '^':
+                        terms.PushLast(new One(left, right));
+                        break;
+                    case '&':
+                        terms.PushLast(new All(left, right));
+                        break;
+                    case '|':
+                        terms.PushLast(new Any(left, right));
+                        break;
+                }
+            } else {
+                terms.PushLast(new Just(tok));
+            }
+        }
+        if (terms.Count == 0) terms.PushLast(new Any());
+        return new Junction(terms.Last);
+    }
+
 }
 
 /// <summary>
-/// Simply matches a single String value, with no additional terms involved.
+/// Simply matches a single string value, with no additional terms involved.
 /// </summary>
 public class Just(string data = "") : ITerm
 {
