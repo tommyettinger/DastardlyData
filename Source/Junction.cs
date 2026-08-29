@@ -1,4 +1,6 @@
-﻿namespace Dastardly.Data;
+﻿using System.Text;
+
+namespace Dastardly.Data;
 
 /// <summary>
 /// Matches potentially more than one string in different ways against a supplied ICollection of string. 
@@ -6,7 +8,7 @@
 /// <remarks>
 /// This is inspired by the Junction type in <a href="https://docs.raku.org/type/Junction">Raku</a>, but
 /// isn't equivalent. A Junction is the outermost parent of its hierarchy, and contains a <see cref="ITerm"/> node.
-/// use <see cref="Match"/> to checj if a Junction matches an ICollection.
+/// use <see cref="Match"/> to check if a Junction matches an ICollection.
 /// </remarks>
 /// <param name="root">The root term for the Junction.</param>
 public class Junction(ITerm root) : ITerm
@@ -60,6 +62,51 @@ public class Junction(ITerm root) : ITerm
 
         return this;
     }
+    
+    /// <summary>
+    /// * Tokenizes a range of length chars in the string text starting at start. Used internally during parsing.
+    /// </summary>
+    /// <remarks>
+    /// Returns a Lisque of strings; they should be considered "operator-like" if they are one of
+    /// <c>()|&^~</c> and otherwise are names.
+    /// </remarks>
+    /// <param name="text">The string to tokenize.</param>
+    /// <param name="start">The first index to read from, inclusive.</param>
+    /// <param name="length">The length of the substring of text to read.</param>
+    /// <returns>A Lisque of the tokenized strings.</returns>
+    protected static Lisque<string> Lex(string text, int start, int length) {
+        Lisque<string> deque = new Lisque<string>(length >> 1);
+        StringBuilder sb = new StringBuilder(32);
+        for (int i = start, idx = 0; idx < length; i++, idx++) {
+            char current = text[i];
+            switch (current) {
+                case '~':
+                    if (sb.Length > 0)
+                        deque.Add(sb.ToString());
+                    deque.Add("");
+                    deque.Add(current.ToString());
+                    sb.Clear();
+                    break;
+                case '(':
+                case ')':
+                case '|':
+                case '&':
+                case '^':
+                    if (sb.Length > 0)
+                        deque.Add(sb.ToString());
+                    deque.Add(current.ToString());
+                    sb.Clear();
+                    break;
+                default:
+                    sb.Append(current);
+                    break;
+            }
+        }
+        if (sb.Length > 0)
+            deque.Add(sb.ToString());
+        return deque;
+    }
+
 }
 
 /// <summary>
