@@ -16,4 +16,6 @@ public interface ITerm : IEquatable<ITerm>, IComparable<ITerm>
     public char Symbol { get; }
     
     public string Name { get; }
+
+    public string ToString();
 }

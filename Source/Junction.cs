@@ -50,6 +50,11 @@ public class Junction(ITerm root) : ITerm
         return Root.CompareTo(other);
     }
 
+    public override string ToString()
+    {
+        return Root.ToString();
+    }
+
     public Junction Negate()
     {
         if (Root is Not n)
@@ -252,6 +257,11 @@ public class Just(string data = "") : ITerm
         if (other is null) return 1;
         return (other is Just just) ? string.Compare(Data, just.Data, StringComparison.InvariantCulture) :  (Symbol - other.Symbol);;
     }
+
+    public override string ToString()
+    {
+        return Item ?? "null";
+    }
 }
 
 /// <summary>
@@ -296,7 +306,11 @@ public class Not(ITerm term) : ITerm
         if (ReferenceEquals(this, other)) return 0;
         if (other is null) return 1;
         return other.CompareTo(Term);
-        
+    }
+
+    public override string ToString()
+    {
+        return '~' + Term.ToString();
     }
 }
 
@@ -389,6 +403,11 @@ public class Any(params ITerm[] terms) : ITerm
         }
 
         return Symbol - other.Symbol;
+    }
+
+    public override string ToString()
+    {
+        return '(' + string.Join('|', Terms) + ')';
     }
 }
 
@@ -487,6 +506,11 @@ public class All(params ITerm[] terms) : ITerm
 
         return Symbol - other.Symbol;
     }
+
+    public override string ToString()
+    {
+        return '(' + string.Join('&', Terms) + ')';
+    }
 }
 
 /// <summary>
@@ -579,5 +603,10 @@ public class One(params ITerm[] terms) : ITerm
         }
 
         return Symbol - other.Symbol;
+    }
+
+    public override string ToString()
+    {
+        return '(' + string.Join('^', Terms) + ')';
     }
 }
