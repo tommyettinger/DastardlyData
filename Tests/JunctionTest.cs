@@ -4,7 +4,29 @@ namespace Tests;
 
 public class JunctionTest
 {
-    
+	[Test]
+	public void TestMatch()
+	{
+		Junction j = Junction.Parse("((~cardiac-arrest&fumble)|(block&miss))");
+		var possible =
+			new IndexedDictionary<string, Lisque<string>>()
+			{
+				{ "miss", ["miss"] },
+				{ "blocking miss", ["miss", "block"] },
+				{ "blocking miss and counter", ["miss", "block", "counter"] },
+				{ "fumble", ["fumble"] },
+				{ "fumble with miss", ["miss", "fumble"] }
+			};
+
+		Console.Out.WriteLine("Checking Junction: " + j);
+		foreach (var e in possible)
+		{
+			Console.Out.WriteLine(e.Key + " matches [" + string.Join(", ", e.Value) + "] ? " + j.Match(e.Value));
+		}
+		Assert.That(!j.Match(new Lisque<string>{"miss"}));
+		Assert.That(j.Match(new Lisque<string>{"block", "miss"}));
+	}
+
 	[Test]
 	public void TestParse() {
 		string text = "((~cardiac-arrest&fumble)|(block&miss))";
