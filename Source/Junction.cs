@@ -14,7 +14,7 @@ namespace Dastardly.Data;
 /// <param name="root">The root term for the Junction.</param>
 public class Junction(ITerm root) : ITerm
 {
-    public ITerm Root = root;
+    public ITerm Root = root.Canonicalize();
     
     public string? Item => null;
 
