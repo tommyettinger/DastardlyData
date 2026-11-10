@@ -32,6 +32,11 @@ public class Junction(ITerm root) : ITerm
         return Root.Remove(coll);
     }
 
+    public IList<string> Filter(IList<string> coll)
+    {
+        return Root.Filter(coll);
+    }
+
     public ITerm Canonicalize()
     {
         return Root.Canonicalize();
@@ -240,6 +245,24 @@ public class Just(string data = "") : ITerm
         return coll;
     }
 
+    public IList<string> Filter(IList<string> coll)
+    {
+        if (Data != null)
+        {
+            if (coll.Contains(Data))
+            {
+                coll.Clear();
+                coll.Add(Data);
+            }
+            else
+            {
+                coll.Clear();
+            }
+        }
+
+        return coll;
+    }
+
     public ITerm Canonicalize()
     {
         return this;
@@ -284,13 +307,12 @@ public class Not(ITerm term) : ITerm
 
     public IList<string> Remove(IList<string> coll)
     {
-			Lisque<string> lisque = [.. coll];
-			Term.Remove(lisque);
-            foreach (var item in lisque)
-            {
-                coll.Remove(item);
-            }
-			return coll;
+			return Term.Filter(coll);
+    }
+
+    public IList<string> Filter(IList<string> coll)
+    {
+			return Term.Remove(coll);
     }
 
     public ITerm Canonicalize()
@@ -346,6 +368,22 @@ public class Any(params ITerm[] terms) : ITerm
         foreach (var t in Terms)
         {
             t.Remove(coll);
+        }
+
+        return coll;
+    }
+
+    public IList<string> Filter(IList<string> coll)
+    {
+        Lisque<string> buffer = [];
+        foreach (var t in Terms)
+        {
+            buffer.AddRange(t.Filter([.. coll]));
+        }
+        coll.Clear();
+        foreach (var item in buffer)
+        {
+            coll.Add(item);
         }
 
         return coll;
@@ -453,6 +491,18 @@ public class All(params ITerm[] terms) : ITerm
         return coll;
     }
 
+    public IList<string> Filter(IList<string> coll)
+    {
+        foreach (var t in Terms)
+        {
+            if (t.Match(coll)) continue;
+            coll.Clear();
+            return coll;
+        }
+        
+        return coll;
+    }
+
     public ITerm Canonicalize()
     {
         for (int i = 0, n = Terms.Count; i < n; i++)
@@ -547,6 +597,18 @@ public class One(params ITerm[] terms) : ITerm
         {
             if (!t.Match(coll)) continue;
             t.Remove(coll);
+            return coll;
+        }
+
+        return coll;
+    }
+
+    public IList<string> Filter(IList<string> coll)
+    {
+        foreach (var t in Terms)
+        {
+            if (!t.Match(coll)) continue;
+            t.Filter(coll);
             return coll;
         }
 
