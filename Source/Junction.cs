@@ -545,7 +545,9 @@ public class One(params ITerm[] terms) : ITerm
     {
         foreach (var t in Terms)
         {
-            if(t.Match(coll)) t.Remove(coll);
+            if (!t.Match(coll)) continue;
+            t.Remove(coll);
+            return coll;
         }
 
         return coll;
