@@ -83,5 +83,35 @@ public class JunctionTest
 	    // Assert.That(!j.Match(new Lisque<string>{"miss"}));
 	    // Assert.That(j.Match(new Lisque<string>{"block", "miss"}));
     }
+
+    /*
+     * miss Filtering from [miss] : miss
+     * blocking miss Filtering from [miss, block] : 
+     * blocking miss and counter Filtering from [miss, block, counter] : counter
+     * fumble Filtering from [fumble] : 
+     * fumble with miss Filtering from [miss, fumble] :
+     */
+    [Test]
+    public void TestFilter()
+    {
+	    Junction j = Junction.Parse("~((~cardiac-arrest&fumble)|(block&miss))");
+	    var possible =
+		    new IndexedDictionary<string, Lisque<string>>()
+		    {
+			    { "miss", ["miss"] },
+			    { "blocking miss", ["miss", "block"] },
+			    { "blocking miss and counter", ["miss", "block", "counter"] },
+			    { "fumble", ["fumble"] },
+			    { "fumble with miss", ["miss", "fumble"] }
+		    };
+
+	    Console.Out.WriteLine("Checking Junction: " + j);
+	    foreach (var e in possible)
+	    {
+		    Console.Out.WriteLine(e.Key + " Filtering from [" + string.Join(", ", e.Value) + "] : " + string.Join(", ", j.Filter([.. e.Value])));
+	    }
+	    // Assert.That(!j.Match(new Lisque<string>{"miss"}));
+	    // Assert.That(j.Match(new Lisque<string>{"block", "miss"}));
+    }
     
 }
