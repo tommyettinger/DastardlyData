@@ -85,16 +85,17 @@ public class JunctionTest
     }
 
     /*
-     * miss Filtering from [miss] : miss
-     * blocking miss Filtering from [miss, block] : 
-     * blocking miss and counter Filtering from [miss, block, counter] : counter
-     * fumble Filtering from [fumble] : 
-     * fumble with miss Filtering from [miss, fumble] :
+     * Checking Junction: ((block&miss)|(fumble&~cardiac-arrest))
+     * miss Filtering from [miss] : 
+     * blocking miss Filtering from [miss, block] : miss, block
+     * blocking miss and counter Filtering from [miss, block, counter] : miss, block, counter
+     * fumble Filtering from [fumble] : fumble
+     * fumble with miss Filtering from [miss, fumble] : miss, fumble
      */
     [Test]
     public void TestFilter()
     {
-	    Junction j = Junction.Parse("~((~cardiac-arrest&fumble)|(block&miss))");
+	    Junction j = Junction.Parse("((~cardiac-arrest&fumble)|(block&miss))");
 	    var possible =
 		    new IndexedDictionary<string, Lisque<string>>()
 		    {
