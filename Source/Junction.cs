@@ -9,7 +9,7 @@ namespace Dastardly.Data;
 /// <remarks>
 /// This is inspired by the Junction type in <a href="https://docs.raku.org/type/Junction">Raku</a>, but
 /// isn't equivalent. A Junction is the outermost parent of its hierarchy, and contains a <see cref="ITerm"/> node.
-/// use <see cref="Match"/> to check if a Junction matches an ICollection.
+/// Use <see cref="Match"/> to check if a Junction matches an ICollection.
 /// </remarks>
 /// <param name="root">The root term for the Junction.</param>
 public class Junction(ITerm root) : ITerm
@@ -27,7 +27,7 @@ public class Junction(ITerm root) : ITerm
         return Root.Match(coll);
     }
 
-    public Lisque<string> Remove(Lisque<string> coll)
+    public IList<string> Remove(IList<string> coll)
     {
         return Root.Remove(coll);
     }
@@ -234,7 +234,7 @@ public class Just(string data = "") : ITerm
         return Data != null && coll.Contains(Data);
     }
 
-    public Lisque<string> Remove(Lisque<string> coll)
+    public IList<string> Remove(IList<string> coll)
     {
         if(Data != null) coll.Remove(Data);
         return coll;
@@ -282,11 +282,14 @@ public class Not(ITerm term) : ITerm
         return !Term.Match(coll);
     }
 
-    public Lisque<string> Remove(Lisque<string> coll)
+    public IList<string> Remove(IList<string> coll)
     {
 			Lisque<string> lisque = [.. coll];
 			Term.Remove(lisque);
-			coll.RemoveEach(lisque);
+            foreach (var item in lisque)
+            {
+                coll.Remove(item);
+            }
 			return coll;
     }
 
@@ -338,7 +341,7 @@ public class Any(params ITerm[] terms) : ITerm
         return false;
     }
 
-    public Lisque<string> Remove(Lisque<string> coll)
+    public IList<string> Remove(IList<string> coll)
     {
         foreach (var t in Terms)
         {
@@ -435,7 +438,7 @@ public class All(params ITerm[] terms) : ITerm
         return true;
     }
 
-    public Lisque<string> Remove(Lisque<string> coll)
+    public IList<string> Remove(IList<string> coll)
     {
         foreach (var t in Terms)
         {
@@ -538,7 +541,7 @@ public class One(params ITerm[] terms) : ITerm
         return count == 1;
     }
 
-    public Lisque<string> Remove(Lisque<string> coll)
+    public IList<string> Remove(IList<string> coll)
     {
         foreach (var t in Terms)
         {
